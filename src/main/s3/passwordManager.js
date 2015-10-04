@@ -20,7 +20,7 @@
  * #L%
  */
 
-var token;
+var token = null;
 
 function validatePassword(password, password2) {
     if(password != password2) {
@@ -31,39 +31,75 @@ function validatePassword(password, password2) {
 }
 
 function displayPasswords() {
-    $.mobile.navigate('#passwords');
-}
-
-$(function() {
+    if(null==token) {
+	// not logged in!!
+	$.mobile.navigate('#login');	
+	return;
+    }
     $.ajax({
-	type: 'GET',
-	url: contextRoot + '/accepting-new-members',
+	type: 'POST',
+	url: contextRoot,
 	dataType: 'json',
-	success: function(data, textStatus, jqXHR) {
-	    $('#loginForm-pleaseWait').hide();
-	    $('#loginForm').show();
-	    if(data) {
-		$('#newUserContainer').show();
-	    }
+	contentType: 'application/json',
+	data: JSON.stringify({
+	    operation: 'getPasswords',
+	    token: token,
+	}),
+	success: function(data, textStatus, jqXHR){
+	    console.log(JSON.stringify(data));
 	}
     });
+}
 
+function processLogin(data) {
+    if(data.errorMessage) {
+	console.log('login failure');
+	console.log(data.errorMessage);
+	return;
+    } 
+    if(data.token) {
+	token = data.token;
+	$.mobile.navigate('#passwords');
+    }
+}
+
+
+$(function() {
     $('#newUser').click(function(){
 	$('#loginButtonContainer').hide();
 	$('#newUserContainer').hide();
 	$('#newUserPasswordContainer').show();
     });
-
+    
+    $('#loginButton').click(function(){
+	var username = $('#loginForm input[name="username"]').val();
+	var password = $('#loginForm input[name="password"]').val();
+	$.ajax({
+	    type: 'POST',
+	    url: contextRoot,
+	    dataType: 'json',
+	    contentType: 'application/json',
+	    data: JSON.stringify({
+		operation: 'login',
+		username: username,
+		password: password
+	    }),
+	    success: function(data, textStatus, jqXHR){
+		processLogin(data);
+	    }
+	});
+    });
+    
     $('#signup').click(function(){
 	var username = $('#loginForm input[name="username"]').val();
 	var password = $('#loginForm input[name="password"]').val();
 	var password2 = $('#loginForm input[name="password2"]').val();
-
+	
 	if(!validatePassword(password, password2)) {
 	    console.log('problem with passwords');
 	    return;
 	}
-
+	
 	$.ajax({
 	    type: 'POST',
 	    url: contextRoot,
@@ -75,11 +111,31 @@ $(function() {
 		password: password
 	    }),
 	    success: function(data, textStatus, jqXHR){
-		console.log(JSON.stringify(data));
-		// TODO extract token
-		displayPasswords();
+		processLogin(data);
 	    }
 	});
     });
-});
 
+    $('#login').on('pageshow', function(){
+	$('#loginForm').hide();	
+	$('#loginForm-pleaseWait').show();
+	$.ajax({
+	    type: 'GET',
+	    url: contextRoot + '/accepting-new-members',
+	    dataType: 'json',
+	    success: function(data, textStatus, jqXHR) {
+		$('#loginForm-pleaseWait').hide();
+		$('#loginForm').show();
+		if(data) {
+		    $('#newUserContainer').show();
+		}
+	    }
+	});
+	
+	$('#passwords').on('pageshow', function(){
+	    displayPasswords();
+	});
+    });
+
+    $.mobile.navigate('#login');	
+});

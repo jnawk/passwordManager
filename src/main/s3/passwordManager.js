@@ -50,7 +50,7 @@ function displayPasswords() {
 	}),
 	success: function(data, textStatus, jqXHR){
 	    // add the passwords to the table
-	    console.log('getPassword success');
+	    console.log('getPasswords success');
 	    console.log(JSON.stringify(data));
 	}
     });

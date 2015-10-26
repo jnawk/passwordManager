@@ -157,11 +157,23 @@ $( function(){
     });
 
     $('#landing').on('pageshow', function(){
-	if('undefined' ==typeof localStorage.token) {
+	if('undefined' == typeof localStorage.token) {
 	    console.log('null token showing login page');
 	    $('body').pagecontainer('change', '#login');
 	} else {
 	    $('body').pagecontainer('change', '#passwords');
 	}
     });
+    
+    if(window.location.hash == '') {
+	console.log('empty hash, changing to landing page');
+
+	if('undefined' == typeof localStorage.token) {
+	    console.log('null token showing login page');
+	    $('body').pagecontainer('change', '#login');
+	} else {
+	    $('body').pagecontainer('change', '#passwords');
+	}
+
+    }
 });

@@ -66,8 +66,6 @@ $( function(){
 		    processLogin(data);
 		}
 	    });
-	    event.preventDefault();
-	    event.stopPropagation();	  
 	});	
 
 	$('#newUser').click(function(){

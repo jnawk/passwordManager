@@ -20,9 +20,6 @@
  * #L%
  */
 
-console.log('nulling token');
-var token = null;
-
 function validatePassword(password, password2) {
     console.log('validating password');
     if(password != password2) {
@@ -30,29 +27,6 @@ function validatePassword(password, password2) {
     }
     // TODO more checks here
     return true;
-}
-
-function displayPasswords() {
-    console.log('displayPasswords()');
-    if(null==token) {
-	console.log('not logged in');
-	$.mobile.navigate('#login');	
-	return;
-    }
-    $.ajax({
-	type: 'POST',
-	url: contextRoot + '/getPasswords',
-	dataType: 'json',
-	contentType: 'application/json',
-	data: JSON.stringify({
-	    token: token
-	}),
-	success: function(data, textStatus, jqXHR){
-	    // add the passwords to the table
-	    console.log('getPassword success');
-	    console.log(JSON.stringify(data));
-	}
-    });
 }
 
 function processLogin(data) {
@@ -63,71 +37,83 @@ function processLogin(data) {
 	return;
     } 
     if(data.token) {
-	token = data.token;
+	localStorage.setItem('token', data.token);
 	console.log('navigating to #passwords');
-	$.mobile.navigate('#passwords');
+	$('body').pagecontainer('change', '#passwords');
     }
 }
 
-
-$(function() {
+$( function(){ 
     console.log("$ handler running");
-    $('#newUser').click(function(){
-	console.log('new user button');
-	$('#loginButtonContainer').hide();
-	$('#newUserContainer').hide();
-	$('#newUserPasswordContainer').show();
-    });
+
+    $('#login').on('pagecreate', function() {
+	console.log('login page created');
+	$('#loginButton').click(function(event){
+	    console.log('login button');
+	    var username = $('#loginForm input[name="username"]').val();
+	    var password = $('#loginForm input[name="password"]').val();
+	    $.ajax({
+		type: 'POST',
+		url: contextRoot + '/login',
+		dataType: 'json',
+		contentType: 'application/json',
+		data: JSON.stringify({
+		    username: username,
+		    password: password
+		}),
+		success: function(data, textStatus, jqXHR){
+		    console.log('login button success');
+		    processLogin(data);
+		}
+	    });
+	    event.preventDefault();
+	    event.stopPropagation();	  
+	});	
+
+	$('#newUser').click(function(){
+	    console.log('new user button');
+	    $('#loginButtonContainer').hide();
+	    $('#newUserContainer').hide();
+	    $('#newUserPasswordContainer').show();
+	});
     
-    $('#loginButton').click(function(){
-	console.log('login button');
-	var username = $('#loginForm input[name="username"]').val();
-	var password = $('#loginForm input[name="password"]').val();
-	$.ajax({
-	    type: 'POST',
-	    url: contextRoot + '/login',
-	    dataType: 'json',
-	    contentType: 'application/json',
-	    data: JSON.stringify({
-		username: username,
-		password: password
-	    }),
-	    success: function(data, textStatus, jqXHR){
-		console.log('login button success');
-		processLogin(data);
+	$('#signup').click(function(){
+	    $('signup button');
+	    var username = $('#loginForm input[name="username"]').val();
+	    var password = $('#loginForm input[name="password"]').val();
+	    var password2 = $('#loginForm input[name="password2"]').val();
+	    
+	    if(!validatePassword(password, password2)) {
+		console.log('problem with passwords');
+		return;
 	    }
+	    
+	    $.ajax({
+		type: 'POST',
+		url: contextRoot + '/signup',
+		dataType: 'json',
+		contentType: 'application/json',
+		data: JSON.stringify({
+		    username: username,
+		    password: password
+		}),
+		success: function(data, textStatus, jqXHR){
+		    console.log('signup button success');
+		    processLogin(data);
+		}
+	    });
 	});
     });
-    
-    $('#signup').click(function(){
-	$('signup button');
-	var username = $('#loginForm input[name="username"]').val();
-	var password = $('#loginForm input[name="password"]').val();
-	var password2 = $('#loginForm input[name="password2"]').val();
-	
-	if(!validatePassword(password, password2)) {
-	    console.log('problem with passwords');
+
+    $('#login').on('pageshow', function(event){
+	console.log('login pageshow');
+	if('undefined' ==typeof localStorage.token) {
+	    console.log('null token showing login page');
+	} else {
+	    $('body').pagecontainer('change', '#passwords');
 	    return;
 	}
-	
-	$.ajax({
-	    type: 'POST',
-	    url: contextRoot + '/signup',
-	    dataType: 'json',
-	    contentType: 'application/json',
-	    data: JSON.stringify({
-		username: username,
-		password: password
-	    }),
-	    success: function(data, textStatus, jqXHR){
-		console.log('signup button success');
-		processLogin(data);
-	    }
-	});
-    });
 
-    $('#login').on('pageshow', function(){
-	console.log('login pageshow');
 	$('#loginForm').hide();	
 	$('#loginForm-pleaseWait').show();
 	$.ajax({
@@ -142,16 +128,42 @@ $(function() {
 		    $('#newUserContainer').show();
 		}
 	    }
-	});
-	
-    });
-    $('#passwords').on('pageshow', function(){
-	console.log('passwords pageshow');
-	displayPasswords();
+	});	    
     });
 
-    if(null==token) {
-	console.log('null token showing login page');
-	$.mobile.navigate('#login');	
-    }
+    $('#passwords').on('pagecreate', function() {
+	console.log('passwords page created');
+    });
+
+    $('#passwords').on('pageshow', function(){
+	console.log('displayPasswords()');
+	if('undefined' == typeof localStorage.token) {
+	    console.log('not logged in');
+	    $('body').pagecontainer('change', '#login');
+	    return;
+	}
+	$.ajax({
+	    type: 'POST',
+	    url: contextRoot + '/getPasswords',
+	    dataType: 'json',
+	    contentType: 'application/json',
+	    data: JSON.stringify({
+		token: localStorage.token
+	    }),
+	    success: function(data, textStatus, jqXHR){
+		// add the passwords to the table
+		console.log('getPassword success');
+		console.log(JSON.stringify(data));
+	    }
+	});
+    });
+
+    $('#landing').on('pageshow', function(){
+	if('undefined' ==typeof localStorage.token) {
+	    console.log('null token showing login page');
+	    $('body').pagecontainer('change', '#login');
+	} else {
+	    $('body').pagecontainer('change', '#passwords');
+	}
+    });
 });

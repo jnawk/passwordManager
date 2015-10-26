@@ -41,12 +41,11 @@ function displayPasswords() {
     }
     $.ajax({
 	type: 'POST',
-	url: contextRoot,
+	url: contextRoot + '/getPasswords',
 	dataType: 'json',
 	contentType: 'application/json',
 	data: JSON.stringify({
-	    operation: 'getPasswords',
-	    token: token,
+	    token: token
 	}),
 	success: function(data, textStatus, jqXHR){
 	    // add the passwords to the table
@@ -86,11 +85,10 @@ $(function() {
 	var password = $('#loginForm input[name="password"]').val();
 	$.ajax({
 	    type: 'POST',
-	    url: contextRoot,
+	    url: contextRoot + '/login',
 	    dataType: 'json',
 	    contentType: 'application/json',
 	    data: JSON.stringify({
-		operation: 'login',
 		username: username,
 		password: password
 	    }),
@@ -114,11 +112,10 @@ $(function() {
 	
 	$.ajax({
 	    type: 'POST',
-	    url: contextRoot,
+	    url: contextRoot + '/signup',
 	    dataType: 'json',
 	    contentType: 'application/json',
 	    data: JSON.stringify({
-		operation: 'signup',
 		username: username,
 		password: password
 	    }),

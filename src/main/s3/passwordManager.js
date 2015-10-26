@@ -43,7 +43,16 @@ function processLogin(data) {
     }
 }
 
-$( function(){ 
+function land() {
+    if('undefined' == typeof localStorage.token) {
+	console.log('null token showing login page');
+	$('body').pagecontainer('change', '#login');
+    } else {
+	$('body').pagecontainer('change', '#passwords');
+    }
+}
+
+$(function(){ 
     console.log("$ handler running");
 
     $('#login').on('pagecreate', function() {
@@ -61,10 +70,7 @@ $( function(){
 		    username: username,
 		    password: password
 		}),
-		success: function(data, textStatus, jqXHR){
-		    console.log('login button success');
-		    processLogin(data);
-		}
+		success: processLogin
 	    });
 	});	
 
@@ -95,10 +101,7 @@ $( function(){
 		    username: username,
 		    password: password
 		}),
-		success: function(data, textStatus, jqXHR){
-		    console.log('signup button success');
-		    processLogin(data);
-		}
+		success: processLogin
 	    });
 	});
     });
@@ -156,24 +159,8 @@ $( function(){
 	});
     });
 
-    $('#landing').on('pageshow', function(){
-	if('undefined' == typeof localStorage.token) {
-	    console.log('null token showing login page');
-	    $('body').pagecontainer('change', '#login');
-	} else {
-	    $('body').pagecontainer('change', '#passwords');
-	}
-    });
-    
+    $('#landing').on('pageshow', land);
     if(window.location.hash == '') {
-	console.log('empty hash, changing to landing page');
-
-	if('undefined' == typeof localStorage.token) {
-	    console.log('null token showing login page');
-	    $('body').pagecontainer('change', '#login');
-	} else {
-	    $('body').pagecontainer('change', '#passwords');
-	}
-
+	land();
     }
 });

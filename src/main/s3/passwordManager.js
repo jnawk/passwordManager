@@ -152,9 +152,14 @@ $(function(){
 		token: localStorage.token
 	    }),
 	    success: function(data, textStatus, jqXHR){
-		// add the passwords to the table
-		console.log('getPassword success');
-		console.log(JSON.stringify(data));
+		if(data.errorMessage) {
+		    localStorage.removeItem('token');
+		    land();
+		} else {
+		    // add the passwords to the table
+		    console.log('getPassword success');
+		    console.log(JSON.stringify(data));
+		}
 	    }
 	});
     });

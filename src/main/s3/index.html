@@ -68,51 +68,55 @@
     </div>
 
     <div data-role="page" id="passwords">
+      <div data-role="header" data-position="fixed">Description</div>
       <div role="main" class="ui-content">
-	<table id="passwordTable" data-role="table" class="ui-responsive">
-          <thead>
-            <tr>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>	    
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>	    
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>	    
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>	    
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>	    
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>	    
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>
-	    <tr><td>Testing 1 2 3</td></tr>
-	  </tbody>
-	</table>
+
+	<ul id="passwordList">
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>	    
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>
+	  <li>Testing 1 2 3</li>
+	</ul>
       </div>
       <div data-role="footer" data-position="fixed">
-	<button id="addPassword" type="button">Add Password</button>
+	<button id="newPassword" type="button">New Password</button>
+	<button class="logoutButton" type="button">Logout</button>
+      </div>
+    </div>
+    
+    <div id="newPasswordForm" data-role="page">
+      <div data-role="header" data-position="fixed">New Password</div>
+      <div data-role="content">
+	<label for="description">Description</label>
+	<input name="description" />
+	<label for="username">Username</label>
+	<input name="username" />
+	<label for="password">Password</label>
+	<input name="password" />
+      </div>
+      <div data-role="footer" data-position="fixed">
+	<button id="addButton" type="button">Add Password</button>
+	<button class="cancelButton" type="button">Cancel</button>
       </div>
     </div>
 
-    <div id="newPasswordForm" title="New Password" class="hidden">
-      <form autocomplete="off">
-        <fieldset>
-          <label for="description">Description</label>
-          <br /> <input name="description" /><br />
-          <label for="username">Username</label>
-          <br /> <input name="username" /><br />
-          <label for="password">Password</label>
-          <br /> <input name="password" />
-        </fieldset>
-      </form>
-    </div>
-    
-    <div id='passwordDetails' class="hidden">
+    <div id="passwordDetails" class="hidden">
       <div id="passwordDetailsLoadProgress"></div>
       <table id="passwordDetailsTable" class="hidden">
         <thead>

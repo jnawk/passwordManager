@@ -134,6 +134,10 @@ $(function(){
 
     $('#passwords').on('pagecreate', function() {
 	console.log('passwords page created');
+
+	$('#newPassword').click(function(){
+	    $('body').pagecontainer('change', '#newPasswordForm');
+	});
     });
 
     $('#passwords').on('pageshow', function(){
@@ -162,6 +166,15 @@ $(function(){
 		}
 	    }
 	});
+    });
+
+    $('body').on('click', '.cancelButton', function() { 
+	window.history.back(); 
+    });
+
+    $('body').on('click', '.logoutButton', function() { 
+	localStorage.removeItem('token');
+	land();
     });
 
     $('#landing').on('pageshow', land);

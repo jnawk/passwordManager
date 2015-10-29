@@ -31,6 +31,7 @@ function validatePassword(password, password2) {
 
 function processLogin(data) {
     console.log('processLogin()');
+    $('#login input[name="password"]').val('');
     if(data.errorMessage) {
 	console.log('login failure');
 	console.log(data.errorMessage);
@@ -137,6 +138,22 @@ $(function(){
 
 	$('#newPassword').click(function(){
 	    $('body').pagecontainer('change', '#newPasswordForm');
+	});
+    });
+
+    $('#newPasswordForm').on('pagecreate', function(){
+	console.log('new password page created');
+
+	$('#addButton').click(function(){
+	    $.ajax({
+		type: 'PUT',
+		url: contextRoot + '/putPassword',
+		datType: 'json',
+		contentType: 'application/json',
+		data: JSON.stringify({}),
+		success: function(data, textStatue, jqXHR){
+		}
+	    });
 	});
     });
 

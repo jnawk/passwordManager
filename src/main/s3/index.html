@@ -21,197 +21,188 @@
   -->
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Password Manager</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-    <meta content="utf-8" http-equiv="encoding">
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="passwordManager.css" />
+<head>
+<title>Password Manager</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<link rel="stylesheet"
+	href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script
+	src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<link rel="stylesheet" type="text/css" href="passwordManager.css" />
 
-    <script type="text/javascript">
-      var contextRoot = 'https://d3dd7zovc46ahy.cloudfront.net/prod/passwordManager';
-    </script>
-    <script type="text/javascript" src="passwordManager.js"></script>
-  </head>
-  <body>
+<script type="text/javascript">
+	var contextRoot = 'https://0jowt33loh.execute-api.us-west-2.amazonaws.com/prod/passwordManager';
+</script>
+<script type="text/javascript" src="passwordManager.js"></script>
+</head>
+<body>
 
-    <div data-role="page" id="landing">
-      Please wait...
-    </div>
+	<div data-role="page" id="landing">Please wait...</div>
 
-    <div data-role="page" id="login">
-      <div role="main" class="ui-content">
-	<div id="loginForm-pleaseWait">
-	  Please wait...
+	<div data-role="page" id="login">
+		<div role="main" class="ui-content">
+			<div id="loginForm-pleaseWait">Please wait...</div>
+			<div id="loginForm" class="hidden">
+				<label for="username">Username</label> <input name="username">
+				<label for="password">Password</label> <input name="password"
+					type="password">
+				<div id="loginButtonContainer">
+					<button id="loginButton" type="button">Login</button>
+				</div>
+				<div class="hidden" id="newUserContainer">
+					<button id="newUser" type="button">New User?</button>
+				</div>
+				<div class="hidden" id="newUserPasswordContainer">
+					<label for="password2">Confirm Password</label> <input
+						name="password2" type="password">
+					<button id="signup" type="button">Sign up</button>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div id="loginForm" class="hidden">
-          <label for="username">Username</label>
-	  <input name="username">
-          <label for="password">Password</label>
-	  <input name="password" type="password">
-	  <div id="loginButtonContainer">
-	    <button id="loginButton" type="button">Login</button>
-	  </div>
-	  <div class="hidden" id="newUserContainer">
-	    <button id="newUser" type="button">New User?</button>
-	  </div>
-	  <div class="hidden" id="newUserPasswordContainer">
-	    <label for="password2">Confirm Password</label>
-	    <input name="password2" type="password">
-	    <button id="signup" type="button">Sign up</button>
-	  </div>
+
+	<div data-role="page" id="passwords">
+		<div data-role="header" data-position="fixed">Description</div>
+		<div role="main" class="ui-content">
+
+			<ul id="passwordList">
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+				<li>Testing 1 2 3</li>
+			</ul>
+		</div>
+		<div data-role="footer" data-position="fixed">
+			<button id="newPassword" type="button">New Password</button>
+			<button class="logoutButton" type="button">Logout</button>
+		</div>
 	</div>
-      </div>
-    </div>
 
-    <div data-role="page" id="passwords">
-      <div data-role="header" data-position="fixed">Description</div>
-      <div role="main" class="ui-content">
+	<div data-role="page" id="newPasswordForm">
+		<div data-role="header" data-position="fixed">New Password</div>
+		<div role="main" class="ui-content">
+			<label for="description">Description</label> <input
+				name="description" /> <label for="username">Username</label> <input
+				name="username" /> <label for="password">Password</label> <input
+				name="password" />
+		</div>
+		<div data-role="footer" data-position="fixed">
+			<button id="addButton" type="button">Add Password</button>
+			<button class="cancelButton" type="button">Cancel</button>
+		</div>
+	</div>
 
-	<ul id="passwordList">
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>	    
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>
-	  <li>Testing 1 2 3</li>
-	</ul>
-      </div>
-      <div data-role="footer" data-position="fixed">
-	<button id="newPassword" type="button">New Password</button>
-	<button class="logoutButton" type="button">Logout</button>
-      </div>
-    </div>
-    
-    <div id="newPasswordForm" data-role="page">
-      <div data-role="header" data-position="fixed">New Password</div>
-      <div data-role="content">
-	<label for="description">Description</label>
-	<input name="description" />
-	<label for="username">Username</label>
-	<input name="username" />
-	<label for="password">Password</label>
-	<input name="password" />
-      </div>
-      <div data-role="footer" data-position="fixed">
-	<button id="addButton" type="button">Add Password</button>
-	<button class="cancelButton" type="button">Cancel</button>
-      </div>
-    </div>
+	<div id="passwordDetails" class="hidden">
+		<div id="passwordDetailsLoadProgress"></div>
+		<table id="passwordDetailsTable" class="hidden">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Password</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td id="displayUsername"></td>
+					<td id="displayPassword"></td>
+				</tr>
+			</tbody>
+		</table>
+		<form id="editPassword" class="hidden">
+			<fieldset>
+				<label for="description">Description</label> <br /> <input
+					name="description" /><br /> <label for="username">Username</label>
+				<br /> <input name="username" /><br /> <label for="password">Password</label>
+				<br /> <input name="password" />
+			</fieldset>
+		</form>
+	</div>
 
-    <div id="passwordDetails" class="hidden">
-      <div id="passwordDetailsLoadProgress"></div>
-      <table id="passwordDetailsTable" class="hidden">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Password</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td id="displayUsername"></td>
-            <td id="displayPassword"></td>
-          </tr>
-        </tbody>
-      </table>
-      <form id="editPassword" class="hidden">
-        <fieldset>
-          <label for="description">Description</label>
-          <br /> <input name="description" /><br />
-          <label for="username">Username</label>
-          <br /> <input name="username" /><br />
-          <label for="password">Password</label>
-          <br /> <input name="password" />
-        </fieldset>
-      </form>
-    </div>
-    
-    <div id="userList" title="Users" class="hidden">
-      <div id="userLoadProgress"></div>
-      <table id="userTable">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Is Administrator?</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    
-    <div id="deletePasswordConfirm" title="Are you sure?" class="hidden">
-      <p>
-        Are you sure you want to delete the password <span
-							id="deletePassword"></span>
-      </p>
-    </div>
-    
-    <div id="deleteUserConfirm" title="Are you sure?" class="hidden">
-      <p>
-        Are you sure you want to delete the user <span
-						    id="deleteUser"></span>
-      </p>
-    </div>
-    
-    <div id="changePassword" title="Change password" class="hidden">
-      <ul class="errors hidden"></ul>
-      <form autocomplete="off">
-        <fieldset>
-          <label for="oldPassword">Old Password</label>
-          <br /> <input name="oldPassword" type="password" /><br />
-          <label for="newPassword1">New Password</label>
-          <br /> <input name="newPassword1" type="password" /><br />
-          <label for="newPassword2">Confirm Password</label>
-          <br /> <input name="newPassword2" type="password" />
-        </fieldset>
-      </form>
-    </div>
-    
-    <div id="passwordGenerator" title="Password generator"
-         class="hidden">
-      <div class="ruleNotice">Please make sure you do not
-        specify a set of rules that can generate no password.</div>
-      <hr>
-      <span>Generated Password: </span><input id="generatedPassword">
-      <hr>
-      <label for="passwordLength">Password length</label>
-      <input name="passwordLength" value="12" /><br />
-      <table>
-        <thead>
-          <tr>
-            <th colspan="4">Character Classes</th>
-            <th>Minimum</th>
-            <th>Maximum</th>
-          </tr>
-          <tr>
-            <td title="Lower Case">l</td>
-            <td title="Upper Case">U</td>
-            <td title="Numbers">#</td>
-            <td title="Symbols">$</td>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
-  </body>
+	<div id="userList" title="Users" class="hidden">
+		<div id="userLoadProgress"></div>
+		<table id="userTable">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>Is Administrator?</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+
+	<div id="deletePasswordConfirm" title="Are you sure?" class="hidden">
+		<p>
+			Are you sure you want to delete the password <span
+				id="deletePassword"></span>
+		</p>
+	</div>
+
+	<div id="deleteUserConfirm" title="Are you sure?" class="hidden">
+		<p>
+			Are you sure you want to delete the user <span id="deleteUser"></span>
+		</p>
+	</div>
+
+	<div id="changePassword" title="Change password" class="hidden">
+		<ul class="errors hidden"></ul>
+		<form autocomplete="off">
+			<fieldset>
+				<label for="oldPassword">Old Password</label> <br /> <input
+					name="oldPassword" type="password" /><br /> <label
+					for="newPassword1">New Password</label> <br /> <input
+					name="newPassword1" type="password" /><br /> <label
+					for="newPassword2">Confirm Password</label> <br /> <input
+					name="newPassword2" type="password" />
+			</fieldset>
+		</form>
+	</div>
+
+	<div id="passwordGenerator" title="Password generator" class="hidden">
+		<div class="ruleNotice">Please make sure you do not specify a
+			set of rules that can generate no password.</div>
+		<hr>
+		<span>Generated Password: </span><input id="generatedPassword">
+		<hr>
+		<label for="passwordLength">Password length</label> <input
+			name="passwordLength" value="12" /><br />
+		<table>
+			<thead>
+				<tr>
+					<th colspan="4">Character Classes</th>
+					<th>Minimum</th>
+					<th>Maximum</th>
+				</tr>
+				<tr>
+					<td title="Lower Case">l</td>
+					<td title="Upper Case">U</td>
+					<td title="Numbers">#</td>
+					<td title="Symbols">$</td>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</body>
 </html>

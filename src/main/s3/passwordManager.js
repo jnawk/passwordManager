@@ -53,6 +53,34 @@ function land() {
 	}
 }
 
+function addListedPassword(password) {
+	var newPassword = $('<li>');
+	var newPasswordRowDiv = $('<div>');
+	var newPasswordCellDiv = $('<div>');
+	var description = $('<span>');
+	var showDetails = $('<span>');
+	var showDetailsButton = $('<button>');
+	
+	description.text(password.description);
+	description.addClass('passwordDescription');
+	
+	showDetailsButton.text('Show Details');
+	showDetails.append(showDetailsButton);
+	showDetails.addClass('showDetailsButton');
+	
+	newPasswordCellDiv.append(description);
+	newPasswordCellDiv.append(showDetails);
+	newPasswordCellDiv.addClass('passwordEntryCell')
+	
+	newPasswordRowDiv.addClass('passwordEntry');
+	newPasswordRowDiv.append(newPasswordCellDiv);
+	
+	newPassword.append(newPasswordRowDiv);
+	
+	newPassword.attr('data-passwordId', password.passwordId);
+	$('#passwordList').append(newPassword);
+}
+
 $(function() {
 	console.log("$ handler running");
 
@@ -186,33 +214,7 @@ $(function() {
 					// add the passwords to the table
 					console.log('getPassword success');
 					console.log(JSON.stringify(data));
-					data.passwords.forEach(function(password){
-						var newPassword = $('<li>');
-						var newPasswordRowDiv = $('<div>');
-						var newPasswordCellDiv = $('<div>');
-						var description = $('<span>');
-						var showDetails = $('<span>');
-						var showDetailsButton = $('<button>');
-						
-						description.text(password.description);
-						description.addClass('passwordDescription');
-						
-						showDetailsButton.text('Show Details');
-						showDetails.append(showDetailsButton);
-						showDetails.addClass('showDetailsButton');
-						
-						newPasswordCellDiv.append(description);
-						newPasswordCellDiv.append(showDetails);
-						newPasswordCellDiv.addClass('passwordEntryCell')
-						
-						newPasswordRowDiv.addClass('passwordEntry');
-						newPasswordRowDiv.append(newPasswordCellDiv);
-						
-						newPassword.append(newPasswordRowDiv);
-						
-						newPassword.attr('data-passwordId', password.passwordId);
-						$('#passwordList').append(newPassword);
-					});
+					data.passwords.forEach(addListedPassword);
 				}
 			}
 		});

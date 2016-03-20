@@ -211,6 +211,7 @@ $(function() {
 					localStorage.removeItem('token');
 					land();
 				} else {
+					localStorage.setItem('token', data.token);
 					// add the passwords to the table
 					console.log('getPassword success');
 					console.log(JSON.stringify(data));

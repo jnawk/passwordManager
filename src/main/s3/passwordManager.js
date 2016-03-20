@@ -151,7 +151,12 @@ $(function() {
 				url : contextRoot + '/putPassword',
 				datType : 'json',
 				contentType : 'application/json',
-				data : JSON.stringify({}),
+				data : JSON.stringify({
+					token: localStorage.token,
+					description: $('#newPasswordForm input[name="description"]').val(),
+					username: $('#newPasswordForm input[name="username"').val(),
+					password: $('#newPasswordForm input[name="password"').val()
+				}),
 				success : function(data, textStatue, jqXHR) {
 				}
 			});
@@ -198,5 +203,31 @@ $(function() {
 	$('#landing').on('pageshow', land);
 	if (window.location.hash == '') {
 		land();
+	}
+	
+	if ('undefined' == typeof localStorage.token) {
+		console.log('null token showing login page');
+		$('body').pagecontainer('change', '#login');
+	} else {
+		console.log('valid token?');
+		$.ajax({
+			type : 'POST',
+			url : contextRoot + '/validate-token',
+			dataType : 'json',
+			contentType : 'application/json',
+			data : JSON.stringify({
+				token : localStorage.token
+			}),
+			success : function(data, textStatus, jqXHR) {
+				if (data.errorMessage) {
+					localStorage.removeItem('token');
+					land();
+				} else {
+					// add the passwords to the table
+					console.log('validate-token success');
+					console.log(JSON.stringify(data));
+				}
+			}
+		});	
 	}
 });

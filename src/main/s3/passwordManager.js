@@ -49,6 +49,7 @@ function land() {
 		console.log('null token showing login page');
 		$('body').pagecontainer('change', '#login');
 	} else {
+		// got a token, check it
 		$('body').pagecontainer('change', '#passwords');
 	}
 }
@@ -136,11 +137,21 @@ function loginPageCreate() {
 	$('#signup').click(signupClick);
 }
 
+function acceptingNewMembersSuccess(data) {
+	console.log('get new user success');
+	$('#loginForm-pleaseWait').hide();
+	$('#loginForm').show();
+	if (data) {
+		$('#newUserContainer').show();
+	}
+}
+
 function loginPageShow() {
 	console.log('login pageshow');
 	if ('undefined' == typeof localStorage.token) {
 		console.log('null token showing login page');
 	} else {
+		// TODO got a token, check it
 		$('body').pagecontainer('change', '#passwords');
 		return;
 	}
@@ -151,14 +162,7 @@ function loginPageShow() {
 		type : 'GET',
 		url : contextRoot + '/accepting-new-members',
 		dataType : 'json',
-		success : function(data, textStatus, jqXHR) {
-			console.log('get new user success');
-			$('#loginForm-pleaseWait').hide();
-			$('#loginForm').show();
-			if (data) {
-				$('#newUserContainer').show();
-			}
-		}
+		success : acceptingNewMembersSuccess
 	});
 }
 
@@ -169,6 +173,10 @@ function newPasswordClick() {
 function passwordsPageCreate() {
 	console.log('passwords page created');
 	$('#newPassword').click(newPasswordClick);
+}
+
+function putPasswordSuccess(data, textStatus, jqXHR) {
+	// TODO implement
 }
 
 function addButtonClick() {
@@ -186,9 +194,7 @@ function addButtonClick() {
 			username : username,
 			password : password
 		}),
-		success : function(data, textStatus, jqXHR) {
-			// TODO implement
-		}
+		success : putPasswordSuccess
 	});
 }
 
@@ -198,12 +204,27 @@ function newPasswordFormPageCreate() {
 	$('#addButton').click(addButtonClick);
 }
 
+function getPasswordsSuccess(data) {
+	if (data.errorMessage) {
+		localStorage.removeItem('token');
+		land();
+	} else {
+		console.log('getPassword success');
+		console.log(JSON.stringify(data));
+		localStorage.setItem('token', data.token);
+		$('#passwordList').empty();
+		data.passwords.forEach(addListedPassword);
+	}
+}
+
 function passwordsPageShow() {
 	console.log('displayPasswords()');
 	if ('undefined' == typeof localStorage.token) {
 		console.log('not logged in');
 		$('body').pagecontainer('change', '#login');
 		return;
+	} else {
+		// TODO got a token, check it
 	}
 	$.ajax({
 		type : 'POST',
@@ -213,18 +234,7 @@ function passwordsPageShow() {
 		data : JSON.stringify({
 			token : localStorage.token
 		}),
-		success : function(data, textStatus, jqXHR) {
-			if (data.errorMessage) {
-				localStorage.removeItem('token');
-				land();
-			} else {
-				localStorage.setItem('token', data.token);
-				// add the passwords to the table
-				console.log('getPassword success');
-				console.log(JSON.stringify(data));
-				data.passwords.forEach(addListedPassword);
-			}
-		}
+		success : getPasswordsSuccess
 	});
 }
 
@@ -237,9 +247,18 @@ function bodyClickLogoutButton() {
 	land();
 }
 
+function validateTokenSuccess(data) {
+	if (data.errorMessage) {
+		localStorage.removeItem('token');
+		land();
+	} else {
+		console.log('validate-token success');
+		console.log(JSON.stringify(data));
+		localStorage.setItem('token', data.token);
+	}
+}
 
-
-$(function() {
+function init() {
 	console.log("$ handler running");
 
 	$('#login').on('pagecreate', loginPageCreate);
@@ -253,7 +272,6 @@ $(function() {
 
 	$('#landing').on('pageshow', land);
 
-	
 	// TODO these don't interact quite right
 	if (window.location.hash == '') {
 		land();
@@ -272,16 +290,9 @@ $(function() {
 			data : JSON.stringify({
 				token : localStorage.token
 			}),
-			success : function(data, textStatus, jqXHR) {
-				if (data.errorMessage) {
-					localStorage.removeItem('token');
-					land();
-				} else {
-					console.log('validate-token success');
-					console.log(JSON.stringify(data));
-					localStorage.setItem('token', data.token);
-				}
-			}
+			success : validateTokenSuccess
 		});
 	}
-});
+}
+
+$(init);

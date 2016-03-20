@@ -186,6 +186,12 @@ $(function() {
 					// add the passwords to the table
 					console.log('getPassword success');
 					console.log(JSON.stringify(data));
+					data.passwords.forEach(function(password){
+						var newPassword = $('<li>');
+						newPassword.text(password.description);
+						newPassword.attr('data-passwordId', password.passwordId);
+						$('#passwordList').append(newPassword);
+					});
 				}
 			}
 		});
@@ -222,10 +228,10 @@ $(function() {
 				if (data.errorMessage) {
 					localStorage.removeItem('token');
 					land();
-				} else {
-					// add the passwords to the table
+				} else {				
 					console.log('validate-token success');
 					console.log(JSON.stringify(data));
+					// need to update the token
 				}
 			}
 		});	

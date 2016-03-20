@@ -145,7 +145,6 @@ $(function() {
 		console.log('new password page created');
 
 		$('#addButton').click(function() {
-			console.log('hello, world!');
 			$.ajax({
 				type : 'PUT',
 				url : contextRoot + '/putPassword',
@@ -158,6 +157,7 @@ $(function() {
 					password: $('#newPasswordForm input[name="password"').val()
 				}),
 				success : function(data, textStatue, jqXHR) {
+					// TODO implement 
 				}
 			});
 		});
@@ -188,7 +188,28 @@ $(function() {
 					console.log(JSON.stringify(data));
 					data.passwords.forEach(function(password){
 						var newPassword = $('<li>');
-						newPassword.text(password.description);
+						var newPasswordRowDiv = $('<div>');
+						var newPasswordCellDiv = $('<div>');
+						var description = $('<span>');
+						var showDetails = $('<span>');
+						var showDetailsButton = $('<button>');
+						
+						description.text(password.description);
+						description.addClass('passwordDescription');
+						
+						showDetailsButton.text('Show Details');
+						showDetails.append(showDetailsButton);
+						showDetails.addClass('showDetailsButton');
+						
+						newPasswordCellDiv.append(description);
+						newPasswordCellDiv.append(showDetails);
+						newPasswordCellDiv.addClass('passwordEntryCell')
+						
+						newPasswordRowDiv.addClass('passwordEntry');
+						newPasswordRowDiv.append(newPasswordCellDiv);
+						
+						newPassword.append(newPasswordRowDiv);
+						
 						newPassword.attr('data-passwordId', password.passwordId);
 						$('#passwordList').append(newPassword);
 					});

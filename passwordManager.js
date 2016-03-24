@@ -322,8 +322,6 @@ function showPasswordDetailsPageCreate() {
     $('#editPasswordButton').click(editPasswordButtonClick);
     $('#savePasswordButton').click(savePasswordButtonClick);
     $('#deletePasswordButton').click(deletePasswordButtonClick);
-    $('input.hidden').parent().hide();
-    $('button.hidden').hide();
 }
 
 function getPasswordDetailsSuccess(data) {
@@ -339,6 +337,19 @@ function showPasswordDetailsPageShow() {
         return;
     }
     console.log(localStorage.passwordIdForShowDetails);
+
+    $('input.hidden').parent().hide();
+    $('button.hidden').hide();
+    $('#editPasswordButton').show();
+
+    $('#passwordDescription').text('loading...');
+    $('#passwordUsername').text('loading...');
+    $('#passwordPassword').text('loading...');
+
+    $('#passwordDescription').show();
+    $('#passwordUsername').show();
+    $('#passwordPassword').show();
+
     $.ajax({
         type: 'POST',
         url: contextRoot + '/get-password-details',

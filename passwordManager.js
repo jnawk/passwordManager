@@ -175,8 +175,9 @@ function passwordsPageCreate() {
     $('#newPassword').click(newPasswordClick);
 }
 
-function putPasswordSuccess(data, textStatus, jqXHR) {
-    // TODO implement
+function putPasswordSuccess(data) {
+    localStorage.setItem('token', data.token);
+    bodyClickCancelButton();
 }
 
 function addButtonClick() {
@@ -281,7 +282,8 @@ function deletePasswordButtonClick() {
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify({
-
+            token: localStorage.token,
+            passwordId: localStorage.passwordIdForShowDetails
         }),
         success: deletePasswordSuccess
     });

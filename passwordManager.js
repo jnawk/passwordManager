@@ -267,7 +267,14 @@ function bodyClickShowDetailsButton() {
 }
 
 function editPasswordButtonClick() {
+    $('input[name="passwordDescription"').val($('#passwordDescription').text());
+    $('input[name="passwordUsername"').val($('#passwordUsername').text());
+    $('input[name="passwordPassword"').val($('#passwordPassword').text());
 
+    $('input.hidden').parent().show();
+    $('#passwordDetailsList span').hide();
+    $('#editPasswordButton').hide();
+    $('#savePasswordButton').show();
 }
 
 function deletePasswordSuccess(data) {
@@ -289,9 +296,34 @@ function deletePasswordButtonClick() {
     });
 }
 
+function savePasswordSuccess(data) {
+    localStorage.setItem('token', data.token);
+    bodyClickCancelButton();
+}
+
+function savePasswordButtonClick() {
+    $.ajax({
+        type: 'PUT',
+        url: contextRoot + '/putPassword',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            token: localStorage.token,
+            passwordId: localStorage.passwordIdForShowDetails,
+            description: $('input[name="passwordDescription"').val(),
+            username: $('input[name="passwordUsername"').val(),
+            password: $('input[name="passwordPassword"').val()
+        }),
+        success: savePasswordSuccess
+    });
+}
+
 function showPasswordDetailsPageCreate() {
     $('#editPasswordButton').click(editPasswordButtonClick);
+    $('#savePasswordButton').click(savePasswordButtonClick);
     $('#deletePasswordButton').click(deletePasswordButtonClick);
+    $('input.hidden').parent().hide();
+    $('button.hidden').hide();
 }
 
 function getPasswordDetailsSuccess(data) {

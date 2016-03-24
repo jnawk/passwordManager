@@ -94,26 +94,36 @@
                 <li>
                     <dl>
                         <dt>Description</dt>
-                        <dd id="passwordDescription"></dd>
+                        <dd>
+                            <span id="passwordDescription"></span>
+                            <input class="hidden" name="passwordDescription"></input>
+                        </dd>
                     </dl>
                 </li>
                 <li>
                     <dl>
                         <dt>Username</dt>
-                        <dd id="passwordUsername"></dd>
+                        <dd>
+                            <span id="passwordUsername"></span>
+                            <input class="hidden" name="passwordUsername"></input>
+                        </dd>
                     </dl>
                 </li>
                 <li>
                     <dl>
                         <dt>Password</dt>
-                        <dd id="passwordPassword"></dd>
+                        <dd>
+                            <span id="passwordPassword"></span>
+                            <input class="hidden" name="passwordPassword"></input>
+                        </dd>
                     </dl>
                 </li>
             </ul>
         </div>
         <div data-role="footer" data-position="fixed">
         	<button id="editPasswordButton" type="button">Edit Password</button>
-        	<button id="deletePasswordButton" type="button">Delete Password</button>
+            <button id="savePasswordButton" type="button" class="hidden">Save Password</button>
+        	<button id="deletePasswordButton" type="button">Delete Password</button>            
         	<button class="cancelButton" type="button">Cancel</button>
         </div>
     </div>
@@ -187,4 +197,4 @@
         </table>
     </div>
 </body>
-</ht
+</html>

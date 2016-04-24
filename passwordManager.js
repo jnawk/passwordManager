@@ -141,7 +141,7 @@ function acceptingNewMembersSuccess(data) {
     console.log('get new user success');
     $('#loginForm-pleaseWait').hide();
     $('#loginForm').show();
-    if (data) {
+    if (data.S == true) {
         $('#newUserContainer').show();
     }
 }
@@ -363,6 +363,12 @@ function showPasswordDetailsPageShow() {
     });
 }
 
+function newPasswordFormPageShow() {
+    $('input[name="description"').val('');
+    $('input[name="username"').val('');
+    $('input[name="password"').val('');
+}
+
 function init() {
     console.log("$ handler running");
 
@@ -371,6 +377,7 @@ function init() {
     $('#passwords').on('pagecreate', passwordsPageCreate);
     $('#passwords').on('pageshow', passwordsPageShow);
     $('#newPasswordForm').on('pagecreate', newPasswordFormPageCreate);
+    $('#newPasswordForm').on('pageshow', newPasswordFormPageShow);
     $('#showPasswordDetails').on('pagecreate', showPasswordDetailsPageCreate);
     $('#showPasswordDetails').on('pageshow', showPasswordDetailsPageShow);
 

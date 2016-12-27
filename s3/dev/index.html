@@ -27,17 +27,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!--<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />-->
+    <link rel="stylesheet" type="text/css" href="passwordManager.css" />
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="passwordManager.css" />
     <script type="text/javascript">
-    var contextRoot = 'https://0jowt33loh.execute-api.us-west-2.amazonaws.com/prod/passwordManager';
+        var contextRoot = 'https://von6f8i67k.execute-api.ap-southeast-2.amazonaws.com/p';
     </script>
     <script type="text/javascript" src="passwordManager.js"></script>
 </head>
@@ -49,7 +48,8 @@
             <div id="loginForm-pleaseWait">Please wait...</div>
             <div id="loginForm" class="hidden">
                 <label for="username">Username</label>
-                <input name="username">
+    
+            <input name="username">
                 <label for="password">Password</label>
                 <input name="password" type="password">
                 <div id="loginButtonContainer">
@@ -91,7 +91,6 @@
             <button class="cancelButton" type="button">Cancel</button>
         </div>
     </div>
-
     <div data-role="page" id="showPasswordDetails">
         <div data-role="header" data-position="fixed">Password Details</div>
         <div role="main" class="ui-content">
@@ -126,13 +125,12 @@
             </ul>
         </div>
         <div data-role="footer" data-position="fixed">
-        	<button id="editPasswordButton" type="button">Edit Password</button>
+            <button id="editPasswordButton" type="button">Edit Password</button>
             <button id="savePasswordButton" type="button" class="hidden">Save Password</button>
-        	<button id="deletePasswordButton" type="button">Delete Password</button>            
-        	<button class="cancelButton" type="button">Cancel</button>
+            <button id="deletePasswordButton" type="button">Delete Password</button>
+            <button class="cancelButton" type="button">Cancel</button>
         </div>
     </div>
-
     <div id="userList" title="Users" class="hidden">
         <div id="userLoadProgress"></div>
         <table id="userTable">
@@ -202,4 +200,9 @@
         </table>
     </div>
 </body>
+<<<<<<< HEAD:index.html
 </html>
+=======
+
+</html>
+>>>>>>> 3cdac672bea8e1188b914b7270d1fc820d918ccb:s3/dev/index.html

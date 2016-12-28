@@ -40,6 +40,7 @@ function processLogin(data) {
     if (data.token) {
         localStorage.setItem('token', data.token);
         window.location.hash = 'passwords';
+        $('body').unbind('keyup');
         getPasswords();
     }
 }
@@ -101,15 +102,22 @@ function acceptingNewMembersSuccess(data) {
     if (data.S == true) {
         $('#newUserContainer').show();
     }
+
+    $('body').bind('keyup', function (event) {
+        if (event.keyCode == 13) {
+            event.stopPropagation();
+            loginButtonClick();
+        }
+    });
+
 }
 
-function loginPageShow() {
+function login_page_show() {
     console.log('login pageshow');
     if ('undefined' == typeof localStorage.token) {
         console.log('null token showing login page');
     } else {
         // TODO got a token, check it
-        $('body').pagecontainer('change', '#passwords');
         return;
     }
 
@@ -357,13 +365,23 @@ function hashChange() {
         return;
     }
     console.log('showing page ' + targetPage[0].id);
-    $('div.page').each(function(index, item) {
+    $('div.page:visible').each(function(index, item) {
         if(item.id != targetPage[0].id) {
             console.log('hiding ' + item.id);
             $(item).addClass('hidden');
+            var hideFunction = window[item.id + '_page_hide'];
+            console.log('searching for ' + item.id + '_page_hide function');
+            if(typeof hideFunction == 'function') {
+                hideFunction();
+            }
         }         
     });
     targetPage.removeClass('hidden');
+    var showFunction = window[targetPage[0].id + '_page_show'];
+    console.log('searching for ' + targetPage[0].id + '_page_show function');
+    if(typeof showFunction == 'function') {
+        showFunction();
+    }
 }
 
 function init() {

@@ -40,36 +40,10 @@ function processLogin(data) {
     if (data.token) {
         localStorage.setItem('token', data.token);
         window.location.hash = 'passwords';
+        getPasswords();
     }
 }
 
-function addListedPassword(password) {
-    var newPassword = $('<li>');
-    var newPasswordRowDiv = $('<div>');
-    var newPasswordCellDiv = $('<div>');
-    var description = $('<span>');
-    var showDetails = $('<span>');
-    var showDetailsButton = $('<button>');
-
-    description.text(password.description);
-    description.addClass('passwordDescription');
-
-    showDetailsButton.text('Show Details');
-    showDetails.append(showDetailsButton);
-    showDetails.addClass('showDetailsButton');
-
-    newPasswordCellDiv.append(description);
-    newPasswordCellDiv.append(showDetails);
-    newPasswordCellDiv.addClass('passwordEntryCell')
-
-    newPasswordRowDiv.addClass('passwordEntry');
-    newPasswordRowDiv.append(newPasswordCellDiv);
-
-    newPassword.append(newPasswordRowDiv);
-
-    newPassword.attr('data-passwordId', password.passwordId);
-    $('#passwordList').append(newPassword);
-}
 
 function loginButtonClick() {
     console.log('login button');
@@ -314,8 +288,29 @@ function getPasswordsSuccess(data) {
         console.log(JSON.stringify(data));
         localStorage.setItem('token', data.token);
         $('#passwordList').empty();
+        var thead = $('<thead>');
+        var tr = $('<tr>');
+        var thDescription = $('<th>');
+        thDescription.text('Description');
+        thead.append(tr);
+        tr.append(thDescription);
+        $('#passwordList').append(thead);
+        $('#passwordList').DataTable({
+            columns: [
+                { 
+                    data: function(item) {
+                        return '<a id=\'' + item.passwordId + '\' class="passwordLink">' + item.description + '</a>';
+                    }
+                }
+            ]
+        });
+
         data.passwords.forEach(addListedPassword);
     }
+}
+
+function addListedPassword(password) {
+    $('#passwordList').DataTable().row.add(password).draw(false);
 }
 
 function getPasswords() {
@@ -390,6 +385,10 @@ function init() {
     }
 
     $(window).on('hashchange', hashChange);
+
+    $('#passwordList').on('click', '.passwordLink', function(e){
+       console.log($(e.target).attr('id')); 
+    });
 
     $('#loginButton').click(loginButtonClick);
     $('#newUser').click(newUserClick);

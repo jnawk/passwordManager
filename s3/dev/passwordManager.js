@@ -40,36 +40,11 @@ function processLogin(data) {
     if (data.token) {
         localStorage.setItem('token', data.token);
         window.location.hash = 'passwords';
+        $('body').unbind('keyup');
+        getPasswords();
     }
 }
 
-function addListedPassword(password) {
-    var newPassword = $('<li>');
-    var newPasswordRowDiv = $('<div>');
-    var newPasswordCellDiv = $('<div>');
-    var description = $('<span>');
-    var showDetails = $('<span>');
-    var showDetailsButton = $('<button>');
-
-    description.text(password.description);
-    description.addClass('passwordDescription');
-
-    showDetailsButton.text('Show Details');
-    showDetails.append(showDetailsButton);
-    showDetails.addClass('showDetailsButton');
-
-    newPasswordCellDiv.append(description);
-    newPasswordCellDiv.append(showDetails);
-    newPasswordCellDiv.addClass('passwordEntryCell')
-
-    newPasswordRowDiv.addClass('passwordEntry');
-    newPasswordRowDiv.append(newPasswordCellDiv);
-
-    newPassword.append(newPasswordRowDiv);
-
-    newPassword.attr('data-passwordId', password.passwordId);
-    $('#passwordList').append(newPassword);
-}
 
 function loginButtonClick() {
     console.log('login button');
@@ -127,15 +102,22 @@ function acceptingNewMembersSuccess(data) {
     if (data.S == true) {
         $('#newUserContainer').show();
     }
+
+    $('body').bind('keyup', function (event) {
+        if (event.keyCode == 13) {
+            event.stopPropagation();
+            loginButtonClick();
+        }
+    });
+
 }
 
-function loginPageShow() {
+function login_page_show() {
     console.log('login pageshow');
     if ('undefined' == typeof localStorage.token) {
         console.log('null token showing login page');
     } else {
         // TODO got a token, check it
-        $('body').pagecontainer('change', '#passwords');
         return;
     }
 
@@ -314,8 +296,29 @@ function getPasswordsSuccess(data) {
         console.log(JSON.stringify(data));
         localStorage.setItem('token', data.token);
         $('#passwordList').empty();
+        var thead = $('<thead>');
+        var tr = $('<tr>');
+        var thDescription = $('<th>');
+        thDescription.text('Description');
+        thead.append(tr);
+        tr.append(thDescription);
+        $('#passwordList').append(thead);
+        $('#passwordList').DataTable({
+            columns: [
+                { 
+                    data: function(item) {
+                        return '<a id=\'' + item.passwordId + '\' class="passwordLink">' + item.description + '</a>';
+                    }
+                }
+            ]
+        });
+
         data.passwords.forEach(addListedPassword);
     }
+}
+
+function addListedPassword(password) {
+    $('#passwordList').DataTable().row.add(password).draw(false);
 }
 
 function getPasswords() {
@@ -362,13 +365,23 @@ function hashChange() {
         return;
     }
     console.log('showing page ' + targetPage[0].id);
-    $('div.page').each(function(index, item) {
+    $('div.page:visible').each(function(index, item) {
         if(item.id != targetPage[0].id) {
             console.log('hiding ' + item.id);
             $(item).addClass('hidden');
+            var hideFunction = window[item.id + '_page_hide'];
+            console.log('searching for ' + item.id + '_page_hide function');
+            if(typeof hideFunction == 'function') {
+                hideFunction();
+            }
         }         
     });
     targetPage.removeClass('hidden');
+    var showFunction = window[targetPage[0].id + '_page_show'];
+    console.log('searching for ' + targetPage[0].id + '_page_show function');
+    if(typeof showFunction == 'function') {
+        showFunction();
+    }
 }
 
 function init() {
@@ -390,6 +403,10 @@ function init() {
     }
 
     $(window).on('hashchange', hashChange);
+
+    $('#passwordList').on('click', '.passwordLink', function(e){
+       console.log($(e.target).attr('id')); 
+    });
 
     $('#loginButton').click(loginButtonClick);
     $('#newUser').click(newUserClick);

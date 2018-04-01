@@ -20,36 +20,31 @@ exports.getPasswordDetails = (event, context) => {
             console.log(err);
             context.fail(err);
         } else {
-            const lambdaResponse = JSON.parse(data.Payload);
-            if(lambdaResponse.errorMessage) {
-                context.fail(lambdaResponse.errorMessage);
-            } else {
-                const newToken = lambdaResponse.token;
-                const user = lambdaResponse.user;
-                const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
-                dynamodb.getItem({
-                    Key: {
-                        'passwordId': { S: event.passwordId },
-                        'userName': { S: user.userName.S }
-                    },
-                    TableName: 'passwordManager-passwords'
-                }, (err, data) => {
-                    if(err) {
-                        context.fail(err);
-                    } else {
-                        context.succeed({
-                            statusCode: 200,
-                            headers: corsHeaders,
-                            body: JSON.stringify({
-                                token: newToken,
-                                description: decrypt(data.Item.description.S, userKey),
-                                username: decrypt(data.Item.username.S, userKey),
-                                password: decrypt(data.Item.password.S, userKey)
-                            })
-                        });
-                    }
-                });
-            }
+            const newToken = data.token;
+            const user = data.user;
+            const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
+            dynamodb.getItem({
+                Key: {
+                    'passwordId': { S: event.passwordId },
+                    'userName': { S: user.userName.S }
+                },
+                TableName: 'passwordManager-passwords'
+            }, (err, data) => {
+                if(err) {
+                    context.fail(err);
+                } else {
+                    context.succeed({
+                        statusCode: 200,
+                        headers: corsHeaders,
+                        body: JSON.stringify({
+                            token: newToken,
+                            description: decrypt(data.Item.description.S, userKey),
+                            username: decrypt(data.Item.username.S, userKey),
+                            password: decrypt(data.Item.password.S, userKey)
+                        })
+                    });
+                }
+            });
         }
     });
 };
@@ -61,31 +56,26 @@ exports.deletePassword = (event, context) => {
             console.log(err);
             context.fail(err);
         } else {
-            const lambdaResponse = JSON.parse(data.Payload);
-            if(lambdaResponse.errorMessage) {
-                context.fail(lambdaResponse.errorMessage);
-            } else {
-                const newToken = lambdaResponse.token;
-                const user = lambdaResponse.user;
-                // const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
-                dynamodb.deleteItem({
-                    Key: {
-                        'passwordId': { S: event.passwordId },
-                        'userName': { S: user.userName.S }
-                    },
-                    TableName: 'passwordManager-passwords'
-                }, (err/*, data*/) => {
-                    if(err) {
-                        context.fail(err);
-                    } else {
-                        context.succeed({
-                            statusCode: 200,
-                            headers: corsHeaders,
-                            body: JSON.stringify({token: newToken})
-                        });
-                    }
-                });
-            }
+            const newToken = data.token;
+            const user = data.user;
+            // const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
+            dynamodb.deleteItem({
+                Key: {
+                    'passwordId': { S: event.passwordId },
+                    'userName': { S: user.userName.S }
+                },
+                TableName: 'passwordManager-passwords'
+            }, (err/*, data*/) => {
+                if(err) {
+                    context.fail(err);
+                } else {
+                    context.succeed({
+                        statusCode: 200,
+                        headers: corsHeaders,
+                        body: JSON.stringify({token: newToken})
+                    });
+                }
+            });
         }
     });
 };
@@ -138,57 +128,51 @@ exports.putPassword = (event, context) => {
             console.log(err);
             context.fail(err);
         } else {
-            var lambdaResponse = JSON.parse(data.Payload);
-            console.log(lambdaResponse);
-            if(lambdaResponse.errorMessage) {
-                context.fail(lambdaResponse.errorMessage);
-            } else {
-                const newToken = lambdaResponse.token;
-                var passwordId;
-                if('undefined' == typeof event.passwordId) {
-                    // new password
-                    const passwordHash = crypto.createHash('sha1').update(event.description).digest('base64');
-                    passwordId = JSON.stringify({
-                        hash: passwordHash,
-                        createDateTime: new Date().getTime()
-                    });
-                } else {
-                    // existing password
-                    passwordId = event.passwordId;
-                }
-                const decryptedUserKey = decrypt(lambdaResponse.user.sysEncryptedKey.S, JSON.parse(lambdaResponse.systemKey.Payload));
-                dynamodb.updateItem({
-                    TableName: 'passwordManager-passwords',
-                    Key: {
-                        passwordId : { S: passwordId },
-                        userName: { S: lambdaResponse.user.userName.S }
-                    },
-                    UpdateExpression: 'set #D = :d, #U = :u, #P = :p',
-                    ExpressionAttributeNames: {
-                        '#D': 'description',
-                        '#U': 'username',
-                        '#P': 'password'
-                    },
-                    ExpressionAttributeValues: {
-                        ':d': { S: encrypt(event.description, decryptedUserKey) },
-                        ':u': { S: encrypt(event.username, decryptedUserKey) },
-                        ':p': { S: encrypt(event.password, decryptedUserKey) }
-                    }
-                }, (err/*, data*/) => {
-                    if(err) {
-                        context.fail(err);
-                    } else {
-                        context.succeed({
-                            statusCode: 200,
-                            headers: corsHeaders,
-                            body: JSON.stringify({
-                                token: newToken,
-                                passwordId: passwordId
-                            })
-                        });
-                    }
+            const newToken = data.token;
+            var passwordId;
+            if('undefined' == typeof event.passwordId) {
+                // new password
+                const passwordHash = crypto.createHash('sha1').update(event.description).digest('base64');
+                passwordId = JSON.stringify({
+                    hash: passwordHash,
+                    createDateTime: new Date().getTime()
                 });
+            } else {
+                // existing password
+                passwordId = event.passwordId;
             }
+            const decryptedUserKey = decrypt(data.user.sysEncryptedKey.S, systemKey);
+            dynamodb.updateItem({
+                TableName: 'passwordManager-passwords',
+                Key: {
+                    passwordId : { S: passwordId },
+                    userName: { S: data.user.userName.S }
+                },
+                UpdateExpression: 'set #D = :d, #U = :u, #P = :p',
+                ExpressionAttributeNames: {
+                    '#D': 'description',
+                    '#U': 'username',
+                    '#P': 'password'
+                },
+                ExpressionAttributeValues: {
+                    ':d': { S: encrypt(event.description, decryptedUserKey) },
+                    ':u': { S: encrypt(event.username, decryptedUserKey) },
+                    ':p': { S: encrypt(event.password, decryptedUserKey) }
+                }
+            }, (err/*, data*/) => {
+                if(err) {
+                    context.fail(err);
+                } else {
+                    context.succeed({
+                        statusCode: 200,
+                        headers: corsHeaders,
+                        body: JSON.stringify({
+                            token: newToken,
+                            passwordId: passwordId
+                        })
+                    });
+                }
+            });
         }
     });
 };

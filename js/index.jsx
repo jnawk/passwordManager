@@ -1,7 +1,8 @@
 import React from 'react';
 import {render} from 'react-dom';
 import PasswordManager from './PasswordManager.jsx';
-
+import 'bootstrap/dist/css/bootstrap.css';
+import './passwordManager.css';
 const passwordManager = (
     <PasswordManager
         v1Endpoint='https://pm.jnawk.nz/passwordManager/p/json'

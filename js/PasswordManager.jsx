@@ -3,6 +3,8 @@ import {Grid,Row,Col,Button} from 'react-bootstrap';
 
 import Login from './Login.jsx';
 
+import {V1API,V2API} from './passwordManagerAPIs.js';
+
 class PasswordManager extends React.Component {
     constructor(props) {
         super(props);
@@ -10,8 +12,60 @@ class PasswordManager extends React.Component {
             loggedIn: false
         };
 
+        this.v1API = new V1API(this.props.v1Endpoint);
+        this.v2API = new V2API(this.props.v2Endpoint);
+
+        this.loggedIn = () => {
+            this.v1API.getPasswordList().then((response) => {
+                if(this.state.v2PasswordList) {
+                    this.setState({
+                        v1PasswordList: response,
+                        loggedIn: true
+                    });
+                } else {
+                    this.setState({v1PasswordList: response});
+                }
+            });
+            this.v2API.getPasswordList().then((response) => {
+                if(this.state.v1PasswordList) {
+                    this.setState({
+                        v2PasswordList: response,
+                        loggedIn: true
+                    });
+                } else {
+                    this.setState({v2PasswordList: response});
+                }
+            });
+        };
+
         this.loginButton_click = () => {
-            console.log(this.state);
+            const v1 = this.state.v1;
+            const v2 = this.state.v2 || this.state.v1;
+            this.v1API.login(v1.username, v1.password).then(
+                () => {
+                    if(this.state.v2LoggedIn) {
+                        this.loggedIn();
+                    } else {
+                        this.setState({v1LoggedIn: true});
+                    }
+                },
+                (errors) => {
+                    console.log(errors);
+                }
+            );
+
+            this.v2API.login(v2.username, v2.password).then(
+                () => {
+                    if(this.state.v1LoggedIn) {
+                        this.loggedIn();
+                    } else {
+                        this.setState({v2LoggedIn: true});
+                    }
+                },
+                (errors) => {
+                    console.log(errors);
+                }
+            );
         };
 
         this.receive_credentials = (endpoint, param, value) => {

@@ -36,6 +36,14 @@ module.exports = {
         ],
         "react/jsx-uses-react": [
             "error"
+        ],
+         "no-console": [
+            "error",
+            {
+                "allow": [
+                    "log",
+                ]
+            }
         ]
     }
 };

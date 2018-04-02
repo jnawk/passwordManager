@@ -13,8 +13,9 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "@babel/preset-env": "^7.0.0-beta.40",
     "@babel/core": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "babel-core": "^6.26.0",
     "babel-loader": "^6.4.1",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.23.0",

@@ -2,6 +2,7 @@ import React from 'react';
 import {Grid,Row,Col,Button} from 'react-bootstrap';
 
 import Login from './Login.jsx';
+import PasswordList from './PasswordList.jsx';
 
 import {V1API,V2API} from './passwordManagerAPIs.js';
 
@@ -80,7 +81,18 @@ class PasswordManager extends React.Component {
 
     render() {
         if(this.state.loggedIn) {
-            return <div>yay</div>;
+            const v1PasswordList = <PasswordList
+                passwords={this.state.v1PasswordList}
+            />;
+            const v2PasswordList = <PasswordList
+                passwords={this.state.v2PasswordList}
+            />;
+            return <Grid className="show-grid">
+                <Row>
+                    <Col lg={6}>{v1PasswordList}</Col>
+                    <Col lg={6}>{v2PasswordList}</Col>
+                </Row>
+            </Grid>;
         } else {
             const v1Login = <Login
                 title='V1 Login Details'

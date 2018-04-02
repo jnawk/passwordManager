@@ -1,5 +1,5 @@
 import React from 'react';
-import {Grid,Row,Col} from 'react-bootstrap';
+import {Row,Col} from 'react-bootstrap';
 
 class Login extends React.Component {
     constructor(props) {
@@ -7,33 +7,33 @@ class Login extends React.Component {
     }
 
     render() {
-        return <Grid>
+        return <div>
             <Row>
-                <Col lg={3}>
+                <Col lg={12}>
                     <h1>{this.props.title}</h1>
                 </Col>
             </Row>
             <Row>
-                <Col lg={1}>
+                <Col lg={2}>
                     <label>Username</label>
                 </Col>
-                <Col lg={2}>
+                <Col lg={5}>
                     <input type="text" onChange={(event) => {
                         this.props.callback('username', event.target.value);
                     }}/>
                 </Col>
             </Row>
             <Row>
-                <Col lg={1}>
+                <Col lg={2}>
                     <label>Password</label>
                 </Col>
-                <Col lg={2}>
+                <Col lg={5}>
                     <input type="password" onChange={(event) => {
                         this.props.callback('password', event.target.value);
                     }}/>
                 </Col>
             </Row>
-        </Grid>;
+        </div>;
     }
 }
 

@@ -1,0 +1,44 @@
+{
+  "name": "jnawk-passwordManager-react",
+  "version": "0.0.1",
+  "description": "Password Manager React Frontend",
+  "main": "passwordManager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Philip Dowie",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/passwordManager"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.23.0",
+    "css-loader": "^0.28.0",
+    "file-loader": "^0.11.1",
+    "react": "^16.1.1",
+    "react-dom": "^16.0.0",
+    "react-google-login": "^3.0.2",
+    "react-numeric-input": "^2.2.0",
+    "style-loader": "^0.16.1",
+    "url-loader": "^0.5.8",
+    "webpack": "^2.3.3"
+  },
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "eslint": "^4.11.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
+    "eslint-plugin-react": "^7.4.0",
+    "eslint-plugin-standard": "^3.0.1"
+  }
+}

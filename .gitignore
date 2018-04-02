@@ -1,2 +1,6 @@
 .elasticbeanstalk/
 passwordManager.zip
+target
+.settings
+.project
+.classpath

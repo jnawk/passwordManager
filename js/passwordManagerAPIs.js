@@ -51,7 +51,6 @@ class V1API {
                         if(response.errors.size) {
                             reject(response.errors);
                         } else {
-                            // TODO convert to a standard form
                             resolve(response.passwords);
                         }
                     },

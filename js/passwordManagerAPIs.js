@@ -51,6 +51,9 @@ class V1API {
                         if(response.errors.size) {
                             reject(response.errors);
                         } else {
+                            response.passwords.sort((left, right) => {
+                                return left.description.localeCompare(right.description);
+                            });
                             resolve(response.passwords);
                         }
                     },
@@ -109,6 +112,14 @@ class V2API {
                 ).then(
                     response => {
                         this.token = response.token;
+                        response.passwords.sort((left, right) => {
+                            return left.description.localeCompare(right.description);
+                        });
+                        response.passwords = response.passwords.map((password) => {
+                            password.id = password.passwordId;
+                            delete password.passwordId;
+                            return password;
+                        });
                         resolve(response.passwords);
                     },
                     err => reject(err)

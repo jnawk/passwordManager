@@ -61,6 +61,31 @@ class V1API {
                 );
             });
         };
+
+        this.fetchPassword = (id) => {
+            return new Promise((resolve, reject) => {
+                fetch(
+                    this.endpoint + '/getPasswordDetails',
+                    {
+                        body: JSON.stringify({passwordId: id}),
+                        headers: new Headers({
+                            'content-type': 'application/json',
+                            'authorization': 'Basic ' + btoa(this.token.username + ':' + this.token.password)
+                        }),
+                        method: 'POST'
+                    }
+                ).then(
+                    response => response.json(),
+                    (errors) => reject(errors)
+                ).then(
+                    (response) => {
+                        delete response.details.id;
+                        resolve(response.details);
+                    },
+                    (errors) => reject(errors)
+                );
+            });
+        };
     }
 }
 
@@ -123,6 +148,29 @@ class V2API {
                         resolve(response.passwords);
                     },
                     err => reject(err)
+                );
+            });
+        };
+
+        this.createPassword = (password) => {
+            return new Promise((resolve, reject) => {
+                fetch(
+                    this.endpoint + '/putPassword',
+                    {
+                        body: JSON.stringify({
+                            token: this.token,
+                            description: password.description,
+                            password: password.password,
+                            username: password.username
+                        }),
+                        headers: new Headers({
+                            'content-type': 'application/json'
+                        }),
+                        method: 'PUT'
+                    }
+                ).then(
+                    () => resolve(),
+                    (errors) => reject(errors)
                 );
             });
         };

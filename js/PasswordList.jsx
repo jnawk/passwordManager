@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row,Col} from 'react-bootstrap';
+import {Row,Col,Button} from 'react-bootstrap';
 
 class PasswordList extends React.Component {
     constructor(props) {
@@ -14,6 +14,11 @@ class PasswordList extends React.Component {
                 <Row key={password.id}>
                     <Col lg={6}>
                         {password.description}
+                    </Col>
+                    <Col lg={1}>
+                        <Button onClick={() => {
+                            this.props.migrateCallback(password.id);
+                        }}>Migrate</Button>
                     </Col>
                 </Row>
             );

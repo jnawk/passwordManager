@@ -77,6 +77,14 @@ class PasswordManager extends React.Component {
             state[endpoint] = endpoint_state;
             this.setState(state);
         };
+
+        this.migrate = (id) => {
+            this.v1API.fetchPassword(id).then(
+                (password) => {
+                    this.v2API.createPassword(password);
+                }
+            );
+        };
     }
 
     render() {
@@ -84,6 +92,9 @@ class PasswordManager extends React.Component {
             const v1PasswordList = <PasswordList
                 passwords={this.state.v1PasswordList}
                 title='V1 Passwords'
+                migrateCallback={(id) => {
+                    this.migrate(id);
+                }}
             />;
             const v2PasswordList = <PasswordList
                 passwords={this.state.v2PasswordList}
@@ -100,12 +111,14 @@ class PasswordManager extends React.Component {
                 title='V1 Login Details'
                 callback={(param, value) => {
                     this.receive_credentials('v1', param, value);
-                }}/>;
+                }}
+            />;
             const v2Login = <Login
                 title='V2 Login Details (if different from V1)'
                 callback={(param, value) => {
                     this.receive_credentials('v2', param, value);
-                }}/>;
+                }}
+            />;
             return <Grid className="show-grid">
                 <Row>
                     <Col lg={6}>{v1Login}</Col>

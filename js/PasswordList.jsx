@@ -11,12 +11,21 @@ class PasswordList extends React.Component {
         const passwordRows = [];
         this.state.passwords.map((password) => {
             passwordRows.push(
-                <Row id={password.id}>
-                    <Col lg={6}>{password.description}</Col>
+                <Row key={password.id}>
+                    <Col lg={6}>
+                        {password.description}
+                    </Col>
                 </Row>
             );
         });
-        return <div>{passwordRows}</div>;
+        return <div>
+            <Row>
+                <Col lg={6}>
+                    <h2>{this.props.title}</h2>
+                </Col>
+            </Row>
+            {passwordRows}
+        </div>;
     }
 }
 

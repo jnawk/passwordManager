@@ -83,9 +83,11 @@ class PasswordManager extends React.Component {
         if(this.state.loggedIn) {
             const v1PasswordList = <PasswordList
                 passwords={this.state.v1PasswordList}
+                title='V1 Passwords'
             />;
             const v2PasswordList = <PasswordList
                 passwords={this.state.v2PasswordList}
+                title="V2 Passwords"
             />;
             return <Grid className="show-grid">
                 <Row>

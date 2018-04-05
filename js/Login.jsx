@@ -10,7 +10,7 @@ class Login extends React.Component {
         return <div>
             <Row>
                 <Col lg={12}>
-                    <h2>{this.props.title}</h2>
+                    <h2>Login Details</h2>
                 </Col>
             </Row>
             <Row>

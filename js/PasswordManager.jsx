@@ -3,132 +3,113 @@ import {Grid,Row,Col,Button} from 'react-bootstrap';
 
 import Login from './Login.jsx';
 import PasswordList from './PasswordList.jsx';
+import Password from './Password.jsx';
 
-import {V1API,V2API} from './passwordManagerAPIs.js';
+import V2API from './passwordManagerAPIs.js';
 
 class PasswordManager extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            loggedIn: false
-        };
+        this.v2API = new V2API(this.props.endpoint);
 
-        this.v1API = new V1API(this.props.v1Endpoint);
-        this.v2API = new V2API(this.props.v2Endpoint);
+        this.loginButtonClick = () => {
+            console.log('login button click');
+            const credentials = this.state.credentials;
+            this.v2API.login(credentials.username, credentials.password).then(() => {
+                this.v2API.getPasswordList().then(passwordList => {
+                    var hash = this.state.target || '';
 
-        this.loggedIn = () => {
-            this.v1API.getPasswordList().then((response) => {
-                if(this.state.v2PasswordList) {
-                    this.setState({
-                        v1PasswordList: response,
-                        loggedIn: true
-                    });
-                } else {
-                    this.setState({v1PasswordList: response});
-                }
-            });
-            this.v2API.getPasswordList().then((response) => {
-                if(this.state.v1PasswordList) {
-                    this.setState({
-                        v2PasswordList: response,
-                        loggedIn: true
-                    });
-                } else {
-                    this.setState({v2PasswordList: response});
-                }
+                    this.loadStateForHash(hash).then(state => {
+                        this.setState(Object.assign({
+                            passwordList: passwordList,
+                            credentials: null,
+                            hash: hash
+                        }, state));
+                    }).catch(err => console.log(err));
+                });
+            }).catch(() => {
+                this.setState({hash: 'login'});
             });
         };
 
-        this.loginButton_click = () => {
-            const v1 = this.state.v1;
-            const v2 = this.state.v2 || this.state.v1;
-            this.v1API.login(v1.username, v1.password).then(
-                () => {
-                    if(this.state.v2LoggedIn) {
-                        this.loggedIn();
-                    } else {
-                        this.setState({v1LoggedIn: true});
-                    }
-                },
-                (errors) => {
-                    console.log(errors);
+        this.loadStateForHash = hash => {
+            console.log('loadStateForHash ' + hash);
+            return new Promise((resolve, reject) => {
+                if(hash.startsWith('display')) {
+                    const passwordId = hash.substr(hash.indexOf('#') + 1);
+                    this.v2API.fetchPassword(atob(passwordId))
+                        .then(response => resolve(response))
+                        .catch(err => reject(err));
+                } else {
+                    resolve({});
                 }
-            );
-
-            this.v2API.login(v2.username, v2.password).then(
-                () => {
-                    if(this.state.v1LoggedIn) {
-                        this.loggedIn();
-                    } else {
-                        this.setState({v2LoggedIn: true});
-                    }
-                },
-                (errors) => {
-                    console.log(errors);
-                }
-            );
+            });
         };
 
-        this.receive_credentials = (endpoint, param, value) => {
-            var state = {};
-            var endpoint_state = this.state[endpoint] || {};
-
-            endpoint_state[param] = value;
-            state[endpoint] = endpoint_state;
-            this.setState(state);
+        this.receiveCredentials = (param, value) => {
+            console.log('receiveCredentials ' + param);
+            var credentials = this.state.credentials || {};
+            credentials[param] = value;
+            this.setState({credentials: credentials});
         };
 
-        this.migrate = (id) => {
-            this.v1API.fetchPassword(id).then(
-                (password) => {
-                    this.v2API.createPassword(password);
-                }
-            );
+        this.displayPassword = passwordId => {
+            console.log('displaypassword ' + passwordId);
+            const hash = 'display#' + btoa(passwordId);
+            this.loadStateForHash(hash).then(state => {
+                this.setState(Object.assign({
+                    hash: hash
+                }, state));
+            }).catch(() => {
+                this.setState({
+                    target: hash,
+                    hash: 'login'
+                });
+            });
         };
+
+        if(window.location.hash != '#login') {
+            console.log('hash != login. ' + window.location.hash);
+            var hash = window.location.hash;
+            if(hash.startsWith('#')) {
+                hash = hash.replace('#', '');
+            }
+
+            Promise.all([
+                this.v2API.getPasswordList(),
+                this.loadStateForHash(hash)
+            ]).then(([passwordList, state]) => {
+                this.setState(Object.assign({
+                    passwordList: passwordList,
+                    hash: hash
+                }, state));
+            }).catch(() => {
+                this.setState({
+                    target: hash,
+                    hash: 'login'
+                });
+            });
+        }
     }
 
+
     render() {
-        if(this.state.loggedIn) {
-            const v1PasswordList = <PasswordList
-                passwords={this.state.v1PasswordList}
-                title='V1 Passwords'
-                migrateCallback={(id) => {
-                    this.migrate(id);
-                }}
-            />;
-            const v2PasswordList = <PasswordList
-                passwords={this.state.v2PasswordList}
-                title="V2 Passwords"
-            />;
+        if(!this.state) {
+            return null;
+        }
+        window.location.hash = this.state.hash;
+        if(this.state.hash == 'login' || !this.state.passwordList) {
             return <Grid className="show-grid">
                 <Row>
-                    <Col lg={6}>{v1PasswordList}</Col>
-                    <Col lg={6}>{v2PasswordList}</Col>
-                </Row>
-            </Grid>;
-        } else {
-            const v1Login = <Login
-                title='V1 Login Details'
-                callback={(param, value) => {
-                    this.receive_credentials('v1', param, value);
-                }}
-            />;
-            const v2Login = <Login
-                title='V2 Login Details (if different from V1)'
-                callback={(param, value) => {
-                    this.receive_credentials('v2', param, value);
-                }}
-            />;
-            return <Grid className="show-grid">
-                <Row>
-                    <Col lg={6}>{v1Login}</Col>
-                    <Col lg={6}>{v2Login}</Col>
+                    <Col lg={6}>
+                        <Login callback={this.receiveCredentials}/>
+                    </Col>
                 </Row>
                 <Row>
                     <Col lg={12}>
                         <Row>
                             <Col lg={12}>
-                                <Button onClick={this.loginButton_click}>
+                                <Button onClick={this.loginButtonClick}>
                                     Login
                                 </Button>
                             </Col>
@@ -136,7 +117,33 @@ class PasswordManager extends React.Component {
                     </Col>
                 </Row>
             </Grid>;
+        } else if (this.state.hash.startsWith('display')) {
+            return <Grid className="show-grid">
+                <Row>
+                    <Col lg={6}>
+                        <Password
+                            password={this.state.password}
+                            goBack={() => this.setState({
+                                hash: '',
+                                password: null
+                            })}/>
+                    </Col>
+                </Row>
+            </Grid>;
+        } else if(this.state.passwordList) {
+            return <Grid className="show-grid">
+                <Row>
+                    <Col lg={6}>
+                        <PasswordList
+                            passwords={this.state.passwordList}
+                            displayPasswordCallback={passwordId => {
+                                this.displayPassword(passwordId);
+                            }}/>
+                    </Col>
+                </Row>
+            </Grid>;
         }
+        return null;
     }
 }
 

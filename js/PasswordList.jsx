@@ -26,7 +26,7 @@ class PasswordList extends React.Component {
         return <div>
             <Row>
                 <Col lg={6}>
-                    <h2>{this.props.title}</h2>
+                    <h2>Passwords</h2>
                 </Col>
             </Row>
             {passwordRows}

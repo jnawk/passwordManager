@@ -7,91 +7,150 @@ import Password from './Password.jsx';
 
 import V2API from './passwordManagerAPIs.js';
 
+const getHash = () => {
+    var hash = window.location.hash;
+    if(hash.startsWith('#')) {
+        hash = hash.replace('#', '');
+    }
+    return hash;
+};
+
 class PasswordManager extends React.Component {
     constructor(props) {
         super(props);
         this.v2API = new V2API(this.props.endpoint);
 
         this.loginButtonClick = () => {
-            console.log('login button click');
-            const credentials = this.state.credentials;
-            this.v2API.login(credentials.username, credentials.password).then(() => {
-                this.v2API.getPasswordList().then(passwordList => {
-                    var hash = this.state.target || '';
+            return new Promise(resolve => {
+                console.log('login button click');
+                const credentials = this.state.credentials;
 
-                    this.loadStateForHash(hash).then(state => {
+                var hash = this.state.target || '';
+                this.v2API.login(credentials.username, credentials.password).then(() => {
+                    Promise.all([
+                        this.getPasswordList(),
+                        this.loadStateForHash(hash)
+                    ]).then(([passwordList, state]) => {
                         this.setState(Object.assign({
                             passwordList: passwordList,
                             credentials: null,
                             hash: hash
                         }, state));
-                    }).catch(err => console.log(err));
+                    });
+                }).catch(() => {
+                    this.setState({hash: 'login'});
                 });
-            }).catch(() => {
-                this.setState({hash: 'login'});
+                resolve();
             });
         };
 
         this.loadStateForHash = hash => {
             console.log('loadStateForHash ' + hash);
-            return new Promise((resolve, reject) => {
-                if(hash.startsWith('display')) {
-                    const passwordId = hash.substr(hash.indexOf('#') + 1);
-                    this.v2API.fetchPassword(atob(passwordId))
-                        .then(response => resolve(response))
-                        .catch(err => reject(err));
+
+            if(hash.startsWith('display')) {
+                console.log('starts with display');
+                const passwordId = hash.substr(hash.indexOf('#') + 1);
+                console.log(this.state);
+                if(this.state && this.state.password && this.state.password.passwordId == passwordId) {
+                    return new Promise(resolve => resolve({password: this.state.password}));
                 } else {
-                    resolve({});
+                    return this.v2API.fetchPassword(atob(passwordId));
                 }
-            });
+            } else {
+                console.log('does not start with display');
+                return new Promise((resolve, reject) => {
+                    this.getPasswordList()
+                        .then(response => resolve({passwordList: response}))
+                        .catch(err => reject(err));
+                });
+            }
+        };
+
+        this.getPasswordList = () => {
+            console.log('getPasswordList');
+            if(this.state && this.state.passwordList) {
+                console.log('existing list');
+                return new Promise(resolve => resolve(this.state.passwordList));
+            } else {
+                console.log('fetching list');
+                return this.v2API.getPasswordList();
+            }
         };
 
         this.receiveCredentials = (param, value) => {
-            console.log('receiveCredentials ' + param);
-            var credentials = this.state.credentials || {};
-            credentials[param] = value;
-            this.setState({credentials: credentials});
+            return new Promise(resolve => {
+                console.log('receiveCredentials ' + param);
+                var credentials = this.state.credentials || {};
+                credentials[param] = value;
+                this.setState({credentials: credentials});
+                resolve();
+            });
         };
 
         this.displayPassword = passwordId => {
-            console.log('displaypassword ' + passwordId);
-            const hash = 'display#' + btoa(passwordId);
-            this.loadStateForHash(hash).then(state => {
-                this.setState(Object.assign({
-                    hash: hash
-                }, state));
-            }).catch(() => {
-                this.setState({
-                    target: hash,
-                    hash: 'login'
-                });
+            return new Promise(resolve => {
+                console.log('displaypassword ' + passwordId);
+                const hash = 'display#' + btoa(passwordId);
+                window.location.hash = hash;
+                resolve();
             });
         };
 
-        if(window.location.hash != '#login') {
-            console.log('hash != login. ' + window.location.hash);
-            var hash = window.location.hash;
-            if(hash.startsWith('#')) {
-                hash = hash.replace('#', '');
-            }
-
-            Promise.all([
-                this.v2API.getPasswordList(),
-                this.loadStateForHash(hash)
-            ]).then(([passwordList, state]) => {
-                this.setState(Object.assign({
-                    passwordList: passwordList,
-                    hash: hash
-                }, state));
-            }).catch(() => {
-                this.setState({
-                    target: hash,
-                    hash: 'login'
+        this.hashChange = () => {
+            console.log('hash changed');
+            const hash = getHash();
+            if(hash == 'login' && this.state && this.state.passwordList) {
+                return new Promise(resolve => {
+                    this.setState({hash: ''});
+                    window.location.hash = '';
+                    resolve();
                 });
-            });
-        }
+            } else if(hash != 'login') {
+                console.log('hash != login. ' + hash);
+                return new Promise((resolve, reject) => {
+                    this.loadStateForHash(hash).then(state => {
+                        this.setState(Object.assign({hash: hash}, state));
+                        resolve();
+                    }).catch(err => reject(err));
+                });
+            } else {
+                return new Promise(resolve => {
+                    const newState = {hash: 'login'};
+                    if(this.state) {
+                        this.setState(newState);
+                    } else {
+                        this.state = newState;
+                    }
+                    resolve();
+                });
+            }
+        };
     }
 
+    componentDidMount() {
+        window.addEventListener('hashchange', this.hashChange, false);
+
+        var hash = getHash();
+        if(hash == '#login') {
+            hash = '';
+        }
+        this.getPasswordList().then(response => {
+            this.setState({
+                passwordList: response,
+                hash: hash
+            });
+        }).then(() => this.hashChange()).catch(err => {
+            console.log(err);
+            this.setState({
+                target: hash,
+                hash: 'login'
+            });
+        });
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('hashchange', this.hashChange, false);
+    }
 
     render() {
         if(!this.state) {

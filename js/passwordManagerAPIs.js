@@ -99,6 +99,7 @@ class V2API {
                 ).then(response => response.json()).then(response => {
                     localStorage.setItem('token', response.token);
                     delete response.token;
+                    response['passwordId'] = btoa(passwordId);
                     resolve({password: response});
                 }).catch(err => reject(err));
             });

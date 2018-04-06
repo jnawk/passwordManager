@@ -20,109 +20,83 @@ class PasswordManager extends React.Component {
         super(props);
         this.v2API = new V2API(this.props.endpoint);
 
-        this.loginButtonClick = () => {
-            return new Promise(resolve => {
-                console.log('login button click');
-                const credentials = this.state.credentials;
-
-                var hash = this.state.target || '';
-                this.v2API.login(credentials.username, credentials.password).then(() => {
-                    Promise.all([
-                        this.getPasswordList(),
-                        this.loadStateForHash(hash)
-                    ]).then(([passwordList, state]) => {
-                        this.setState(Object.assign({
-                            passwordList: passwordList,
-                            credentials: null,
-                            hash: hash
-                        }, state));
-                    });
-                }).catch(() => {
-                    this.setState({hash: 'login'});
-                });
-                resolve();
-            });
-        };
-
+        // returns state
         this.loadStateForHash = hash => {
-            console.log('loadStateForHash ' + hash);
-
             if(hash.startsWith('display')) {
-                console.log('starts with display');
                 const passwordId = hash.substr(hash.indexOf('#') + 1);
-                console.log(this.state);
                 if(this.state && this.state.password && this.state.password.passwordId == passwordId) {
-                    return new Promise(resolve => resolve({password: this.state.password}));
-                } else {
-                    return this.v2API.fetchPassword(atob(passwordId));
+                    return Promise.resolve({password: this.state.password});
                 }
-            } else {
-                console.log('does not start with display');
-                return new Promise((resolve, reject) => {
-                    this.getPasswordList()
-                        .then(response => resolve({passwordList: response}))
-                        .catch(err => reject(err));
-                });
+                return this.v2API.fetchPassword(atob(passwordId));
             }
+
+            return Promise.resolve(this.getPasswordList().then(response => ({passwordList: response})));
         };
 
+        // returns password list
         this.getPasswordList = () => {
-            console.log('getPasswordList');
             if(this.state && this.state.passwordList) {
-                console.log('existing list');
-                return new Promise(resolve => resolve(this.state.passwordList));
-            } else {
-                console.log('fetching list');
-                return this.v2API.getPasswordList();
+                return Promise.resolve(this.state.passwordList);
             }
+            return this.v2API.getPasswordList();
         };
 
-        this.receiveCredentials = (param, value) => {
-            return new Promise(resolve => {
-                console.log('receiveCredentials ' + param);
-                var credentials = this.state.credentials || {};
-                credentials[param] = value;
-                this.setState({credentials: credentials});
-                resolve();
+
+        ////////////////////
+        // EVENT HANDLERS //
+        ////////////////////
+
+        this.loginButtonClick = () => {
+            const credentials = this.state.credentials;
+            const hash = this.state.target || '';
+            this.v2API.login(credentials.username, credentials.password).then(() => {
+                Promise.all([
+                    this.getPasswordList(),
+                    this.loadStateForHash(hash)
+                ]).then(([passwordList, state]) => {
+                    this.setState(Object.assign({
+                        passwordList: passwordList,
+                        credentials: null,
+                        hash: hash
+                    }, state));
+                });
+            }).catch(() => {
+                this.setState({hash: 'login'});
             });
+        };
+
+        this.closePasswordButtonClick = () => this.setState({
+            hash: '',
+            password: null
+        });
+
+        // handles the change event on the username and password input fields
+        this.receiveCredentials = (param, value) => {
+            var credentials = this.state.credentials || {};
+            credentials[param] = value;
+            this.setState({credentials: credentials});
         };
 
         this.displayPassword = passwordId => {
-            return new Promise(resolve => {
-                console.log('displaypassword ' + passwordId);
-                const hash = 'display#' + btoa(passwordId);
-                window.location.hash = hash;
-                resolve();
-            });
+            const hash = 'display#' + btoa(passwordId);
+            this.loadStateForHash(hash).then(state => this.setState(Object.assign({hash: hash}, state)));
         };
 
+        // fired when the location hash changing
         this.hashChange = () => {
-            console.log('hash changed');
             const hash = getHash();
             if(hash == 'login' && this.state && this.state.passwordList) {
-                return new Promise(resolve => {
-                    this.setState({hash: ''});
-                    window.location.hash = '';
-                    resolve();
-                });
+                this.setState({hash: ''});
+                window.location.hash = '';
             } else if(hash != 'login') {
-                console.log('hash != login. ' + hash);
-                return new Promise((resolve, reject) => {
-                    this.loadStateForHash(hash).then(state => {
-                        this.setState(Object.assign({hash: hash}, state));
-                        resolve();
-                    }).catch(err => reject(err));
-                });
+                this.loadStateForHash(hash).then(state => this.setState(Object.assign({hash: hash}, state)));
             } else {
-                return new Promise(resolve => {
-                    const newState = {hash: 'login'};
-                    if(this.state) {
-                        this.setState(newState);
-                    } else {
-                        this.state = newState;
-                    }
-                    resolve();
-                });
+                const newState = {hash: 'login'};
+                if(this.state) {
+                    this.setState(newState);
+                } else {
+                    this.state = newState;
+                }
             }
         };
     }
@@ -131,21 +105,16 @@ class PasswordManager extends React.Component {
         window.addEventListener('hashchange', this.hashChange, false);
 
         var hash = getHash();
-        if(hash == '#login') {
+        if(hash == 'login') {
             hash = '';
         }
-        this.getPasswordList().then(response => {
-            this.setState({
-                passwordList: response,
-                hash: hash
-            });
-        }).then(() => this.hashChange()).catch(err => {
-            console.log(err);
-            this.setState({
-                target: hash,
-                hash: 'login'
-            });
-        });
+        this.getPasswordList().then(passwordList => this.setState({
+            passwordList: passwordList,
+            hash: hash
+        })).then(() => this.hashChange()).catch(() => this.setState({
+            target: hash,
+            hash: 'login'
+        }));
     }
 
     componentWillUnmount() {
@@ -176,28 +145,23 @@ class PasswordManager extends React.Component {
                     </Col>
                 </Row>
             </Grid>;
-        } else if (this.state.hash.startsWith('display')) {
+        } else if (this.state.hash.startsWith('display') && this.state.password) {
             return <Grid className="show-grid">
                 <Row>
                     <Col lg={6}>
                         <Password
                             password={this.state.password}
-                            goBack={() => this.setState({
-                                hash: '',
-                                password: null
-                            })}/>
+                            goBack={this.closePasswordButtonClick}/>
                     </Col>
                 </Row>
             </Grid>;
-        } else if(this.state.passwordList) {
+        } else if(this.state.hash == '' && this.state.passwordList) {
             return <Grid className="show-grid">
                 <Row>
                     <Col lg={6}>
                         <PasswordList
                             passwords={this.state.passwordList}
-                            displayPasswordCallback={passwordId => {
-                                this.displayPassword(passwordId);
-                            }}/>
+                            displayPasswordCallback={passwordId => this.displayPassword(passwordId)}/>
                     </Col>
                 </Row>
             </Grid>;

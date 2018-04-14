@@ -130,7 +130,9 @@ class PasswordManager extends React.Component {
             return <Grid className="show-grid">
                 <Row>
                     <Col lg={6}>
-                        <Login callback={this.receiveCredentials}/>
+                        <Login
+                            callback={this.receiveCredentials}
+                            enterCallback={this.loginButtonClick}/>
                     </Col>
                 </Row>
                 <Row>

@@ -18,9 +18,9 @@ class Login extends React.Component {
                     <label>Username</label>
                 </Col>
                 <Col lg={5}>
-                    <input type="text" onChange={(event) => {
-                        this.props.callback('username', event.target.value);
-                    }}/>
+                    <input 
+                        type="text"
+                        onChange={event => this.props.callback('username', event.target.value)}/>
                 </Col>
             </Row>
             <Row>
@@ -30,10 +30,8 @@ class Login extends React.Component {
                 <Col lg={5}>
                     <input
                         type="password"
-                        onChange={(event) => {
-                            this.props.callback('password', event.target.value);
-                        }}
-                        onKeyPress={(target) => {
+                        onChange={event => this.props.callback('password', event.target.value)}
+                        onKeyPress={target => {
                             if(target.charCode == 13) {
                                 this.props.enterCallback();
                             }

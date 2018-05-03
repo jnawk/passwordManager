@@ -111,13 +111,16 @@ class PasswordManager extends React.Component {
         if(hash == 'login') {
             hash = '';
         }
-        this.getPasswordList().then(passwordList => this.setState({
-            passwordList: passwordList,
-            hash: hash
-        })).then(() => this.hashChange()).catch(() => this.setState({
-            target: hash,
-            hash: 'login'
-        }));
+        this.getPasswordList()
+            .then(passwordList => this.setState({
+                passwordList: passwordList,
+                hash: hash
+            }))
+            .then(this.hashChange)
+            .catch(() => this.setState({
+                target: hash,
+                hash: 'login'
+            }));
     }
 
     componentWillUnmount() {

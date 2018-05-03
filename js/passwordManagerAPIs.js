@@ -25,7 +25,7 @@ class V2API {
 
         this.getPasswordList = () => {
             if(!localStorage.token) {
-                throw new Error('not logged in');
+                return Promise.reject('not logged in');
             } else {
                 return fetch(
                     this.endpoint + '/getPasswords',

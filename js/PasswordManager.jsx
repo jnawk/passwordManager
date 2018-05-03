@@ -41,6 +41,9 @@ class PasswordManager extends React.Component {
             return this.v2API.getPasswordList();
         };
 
+        this.savePassword = (passwordId, data) => {
+            return this.v2API.updatePassword(atob(passwordId), data);
+        };
 
         ////////////////////
         // EVENT HANDLERS //
@@ -153,7 +156,8 @@ class PasswordManager extends React.Component {
                     <Col lg={6}>
                         <Password
                             password={this.state.password}
-                            goBack={this.closePasswordButtonClick}/>
+                            goBack={this.closePasswordButtonClick}
+                            savePassword={this.savePassword}/>
                     </Col>
                 </Row>
             </Grid>;

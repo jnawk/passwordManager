@@ -7,101 +7,101 @@ class V2API {
         this.endpoint = endpoint;
 
         this.login = (username, password) => {
-            return new Promise((resolve, reject) => {
-                fetch(
-                    this.endpoint + '/login',
-                    {
-                        body: JSON.stringify({
-                            username: username,
-                            password: password
-                        }),
-                        method: 'POST',
-                        headers: new Headers({
-                            'content-type': 'application/json'
-                        })
-                    }
-                ).then(
-                    response => response.json(),
-                    err => reject(err)
-                ).then(
-                    response => {
-                        localStorage.setItem('token', response.token);
-                        resolve();
-                    },
-                    err => reject(err)
-                );
-            });
+            return fetch(
+                this.endpoint + '/login',
+                {
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    }),
+                    method: 'POST',
+                    headers: new Headers({
+                        'content-type': 'application/json'
+                    })
+                }
+            ).then(response => response.json()
+            ).then(response => localStorage.setItem('token', response.token));
         };
 
         this.getPasswordList = () => {
-            return new Promise((resolve, reject) => {
-                if(!localStorage.token) {
-                    reject('not logged in');
-                } else {
-                    fetch(
-                        this.endpoint + '/getPasswords',
-                        {
-                            body: JSON.stringify({token: localStorage.token}),
-                            headers: new Headers({
-                                'content-type': 'application/json'
-                            }),
-                            method: 'POST'
-                        }
-                    ).then(response => response.json()
-                    ).then(response => {
-                        localStorage.setItem('token', response.token);
-                        response.passwords.sort(passwordSort);
-                        resolve(response.passwords);
-                    }).catch(err => {
-                        reject(err);
-                    });
-                }
-            });
-        };
-
-        this.createPassword = password => {
-            return new Promise((resolve, reject) => {
-                fetch(
-                    this.endpoint + '/putPassword',
+            if(!localStorage.token) {
+                throw new Error('not logged in');
+            } else {
+                return fetch(
+                    this.endpoint + '/getPasswords',
                     {
-                        body: JSON.stringify({
-                            token: this.token,
-                            description: password.description,
-                            password: password.password,
-                            username: password.username
-                        }),
-                        headers: new Headers({
-                            'content-type': 'application/json'
-                        }),
-                        method: 'PUT'
-                    }
-                ).then(
-                    () => resolve(),
-                    (errors) => reject(errors)
-                );
-            });
-        };
-
-        this.fetchPassword = passwordId => {
-            return new Promise((resolve, reject) => {
-                fetch(
-                    this.endpoint + '/get-password-details',
-                    {
-                        body: JSON.stringify({
-                            token: localStorage.token,
-                            passwordId: passwordId
-                        }),
+                        body: JSON.stringify({token: localStorage.token}),
                         headers: new Headers({
                             'content-type': 'application/json'
                         }),
                         method: 'POST'
                     }
-                ).then(response => response.json()).then(response => {
+                ).then(response => response.json()
+                ).then(response => {
                     localStorage.setItem('token', response.token);
-                    delete response.token;
-                    response['passwordId'] = btoa(passwordId);
-                    resolve({password: response});
-                }).catch(err => reject(err));
+                    response.passwords.sort(passwordSort);
+                    return response.passwords;
+                });
+            }
+        };
+
+        this.createPassword = password => {
+            return fetch(
+                this.endpoint + '/putPassword',
+                {
+                    body: JSON.stringify({
+                        token: localStorage.token,
+                        description: password.description,
+                        password: password.password,
+                        username: password.username
+                    }),
+                    headers: new Headers({
+                        'content-type': 'application/json'
+                    }),
+                    method: 'PUT'
+                }
+            ).then(response => response.json()
+            ).then(response => localStorage.setItem('token', response.token));
+        };
+
+        this.updatePassword = (passwordId, password) => {
+            return fetch(
+                this.endpoint + '/putPassword',
+                {
+                    body: JSON.stringify({
+                        token: localStorage.token,
+                        description: password.description,
+                        password: password.password,
+                        username: password.username,
+                        passwordId: passwordId
+                    }),
+                    headers: new Headers({
+                        'content-type': 'application/json'
+                    }),
+                    method: 'PUT'
+                }
+            ).then(response => response.json()
+            ).then(response => localStorage.setItem('token', response.token));
+        };
+
+        this.fetchPassword = passwordId => {
+            return fetch(
+                this.endpoint + '/get-password-details',
+                {
+                    body: JSON.stringify({
+                        token: localStorage.token,
+                        passwordId: passwordId
+                    }),
+                    headers: new Headers({
+                        'content-type': 'application/json'
+                    }),
+                    method: 'POST'
+                }
+            ).then(response => response.json()).then(response => {
+                localStorage.setItem('token', response.token);
+                delete response.token;
+                response['passwordId'] = btoa(passwordId);
+                return {password: response};
             });
         };
     }

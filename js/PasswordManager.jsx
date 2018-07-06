@@ -191,6 +191,13 @@ class PasswordManager extends React.Component {
             return <Grid className="show-grid">
                 <Row>
                     <Col lg={6}>
+                        <Button onClick={this.newPasswordButtonClick}>
+                            New Password
+                        </Button>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col lg={6}>
                         <PasswordList
                             passwords={this.state.passwordList}
                             displayPasswordCallback={passwordId => this.displayPassword(passwordId)}

@@ -6,22 +6,32 @@ class Password extends React.Component {
         super(props);
 
         var pw = this.props.password;
-        this.state = {
-            description: pw.description,
-            username: pw.username,
-            password: pw.password
-        };
+        if(pw) {
+            this.state = {
+                description: pw.description,
+                username: pw.username,
+                password: pw.password,
+                passwordId: pw.passwordId
+            };
+        } else {
+            this.state = {edit: true};
+        }
 
         this.edit_buttonClick = () => {
             this.setState({edit: true});
         };
 
         this.save_buttonClick = () => {
-            this.props.savePassword(this.props.password.passwordId, {
+            this.props.savePassword(this.state.passwordId, {
                 description: this.state.description,
                 username: this.state.username,
                 password: this.state.password
-            }).then(() => this.setState({edit: false}));
+            }).then(response => {
+              if(!this.state.passwordId) {
+                  this.setState({passwordId: response.passwordId});
+              }
+              this.setState({edit: false});
+            });
         };
 
     }

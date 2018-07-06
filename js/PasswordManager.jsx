@@ -42,7 +42,20 @@ class PasswordManager extends React.Component {
         };
 
         this.savePassword = (passwordId, data) => {
-            return this.v2API.updatePassword(atob(passwordId), data);
+            if(passwordId) {
+                return this.v2API.updatePassword(atob(passwordId), data);
+            } else {
+                return this.v2API.createPassword(data).then(response => {
+                    var pwList = this.state.passwordList;
+                    pwList.push({
+                      description: data.description,
+                      passwordId: response.passwordId
+                    });
+                    pwList = this.v2API.sortPasswords(pwList);
+                    this.setState({passwordList: pwList});
+                    return response;
+                });
+            }
         };
 
         ////////////////////
@@ -71,6 +84,10 @@ class PasswordManager extends React.Component {
         this.closePasswordButtonClick = () => this.setState({
             hash: '',
             password: null
+        });
+
+        this.newPasswordButtonClick = () => this.setState({
+            hash: 'newPassword'
         });
 
         // handles the change event on the username and password input fields
@@ -171,6 +188,23 @@ class PasswordManager extends React.Component {
                         <PasswordList
                             passwords={this.state.passwordList}
                             displayPasswordCallback={passwordId => this.displayPassword(passwordId)}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col lg={6}>
+                        <Button onClick={this.newPasswordButtonClick}>
+                            New Password
+                        </Button>
+                    </Col>
+                </Row>
+            </Grid>;
+        } else if(this.state.hash == 'newPassword') {
+            return <Grid className="show-grid">
+                <Row>
+                    <Col lg={6}>
+                      <Password
+                          goBack={this.closePasswordButtonClick}
+                          savePassword={this.savePassword}/>
                     </Col>
                 </Row>
             </Grid>;

@@ -23,6 +23,11 @@ class V2API {
             ).then(response => localStorage.setItem('token', response.token));
         };
 
+        this.sortPasswords = passwordList => {
+            passwordList.sort(passwordSort);
+            return passwordList;
+        };
+
         this.getPasswordList = () => {
             if(!localStorage.token) {
                 return Promise.reject('not logged in');
@@ -61,7 +66,10 @@ class V2API {
                     method: 'PUT'
                 }
             ).then(response => response.json()
-            ).then(response => localStorage.setItem('token', response.token));
+            ).then(response => {
+              localStorage.setItem('token', response.token);
+              return response;
+            });
         };
 
         this.updatePassword = (passwordId, password) => {

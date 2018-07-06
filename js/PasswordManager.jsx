@@ -58,6 +58,12 @@ class PasswordManager extends React.Component {
             }
         };
 
+        this.deletePassword = passwordId => {
+            return this.v2API.deletePassword(passwordId).then(() => {
+                this.setState({passwordList: this.state.passwordList.filter(password => password.passwordId != passwordId)});
+            });
+        };
+
         ////////////////////
         // EVENT HANDLERS //
         ////////////////////
@@ -187,7 +193,9 @@ class PasswordManager extends React.Component {
                     <Col lg={6}>
                         <PasswordList
                             passwords={this.state.passwordList}
-                            displayPasswordCallback={passwordId => this.displayPassword(passwordId)}/>
+                            displayPasswordCallback={passwordId => this.displayPassword(passwordId)}
+                            deletePasswordCallback={passwordId => this.deletePassword(passwordId)}
+                        />
                     </Col>
                 </Row>
                 <Row>

@@ -28,6 +28,23 @@ class V2API {
             return passwordList;
         };
 
+        this.deletePassword = passwordId => {
+            return fetch(
+                this.endpoint + '/delete-password',
+                {
+                    body: JSON.stringify({
+                        token: localStorage.token,
+                        passwordId: passwordId
+                    }),
+                    headers: new Headers({
+                        'content-type': 'application/json'
+                    }),
+                    method: 'POST'
+                }
+            ).then(response => response.json()
+            ).then(response => localStorage.setItem('token', response.token));
+        };
+
         this.getPasswordList = () => {
             if(!localStorage.token) {
                 return Promise.reject('not logged in');

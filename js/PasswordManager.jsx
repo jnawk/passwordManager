@@ -48,8 +48,8 @@ class PasswordManager extends React.Component {
                 return this.v2API.createPassword(data).then(response => {
                     var pwList = this.state.passwordList;
                     pwList.push({
-                      description: data.description,
-                      passwordId: response.passwordId
+                        description: data.description,
+                        passwordId: response.passwordId
                     });
                     pwList = this.v2API.sortPasswords(pwList);
                     this.setState({passwordList: pwList});
@@ -217,9 +217,9 @@ class PasswordManager extends React.Component {
             return <Grid className="show-grid">
                 <Row>
                     <Col lg={6}>
-                      <Password
-                          goBack={this.closePasswordButtonClick}
-                          savePassword={this.savePassword}/>
+                        <Password
+                            goBack={this.closePasswordButtonClick}
+                            savePassword={this.savePassword}/>
                     </Col>
                 </Row>
             </Grid>;

@@ -27,10 +27,10 @@ class Password extends React.Component {
                 username: this.state.username,
                 password: this.state.password
             }).then(response => {
-              if(!this.state.passwordId) {
-                  this.setState({passwordId: response.passwordId});
-              }
-              this.setState({edit: false});
+                if(!this.state.passwordId) {
+                    this.setState({passwordId: response.passwordId});
+                }
+                this.setState({edit: false});
             });
         };
 

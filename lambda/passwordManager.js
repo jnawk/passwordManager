@@ -156,7 +156,7 @@ exports.putPassword = (event, context) => {
                 },
                 ExpressionAttributeValues: {
                     ':d': { S: encrypt(event.description, decryptedUserKey) },
-                    ':u': { S: encrypt(event.username, decryptedUserKey) },
+                    ':u': { S: encrypt(event.username || '', decryptedUserKey) },
                     ':p': { S: encrypt(event.password, decryptedUserKey) }
                 }
             }, (err/*, data*/) => {

@@ -1,10 +1,12 @@
 import React from 'react'
-import { Container, Row, Col, Button} from 'react-bootstrap'
-import PasswordList from './PasswordList.jsx'
+import { Container, Row, Col } from 'react-bootstrap'
+
+import V2API from './passwordManagerAPIs.js'
+
+import LoginPage from './LoginPage.jsx'
 import Password from './Password.jsx'
 import PasswordDisplay from './PasswordDisplay.jsx'
-import LoginPage from './LoginPage.jsx'
-import V2API from './passwordManagerAPIs.js'
+import PasswordListDisplay from './PasswordListDisplay.jsx'
 
 const getHash = () => {
     var hash = window.location.hash
@@ -168,31 +170,12 @@ class PasswordManager extends React.Component {
                     savePassword={this.savePassword}/>
             )
         } else if(this.state.hash == '' && this.state.passwordList) {
-            return <Container className="show-grid">
-                <Row>
-                    <Col lg={6}>
-                        <Button onClick={this.newPasswordButtonClick}>
-                            New Password
-                        </Button>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col lg={6}>
-                        <PasswordList
-                            passwords={this.state.passwordList}
-                            displayPasswordCallback={passwordId => this.displayPassword(passwordId)}
-                            deletePasswordCallback={passwordId => this.deletePassword(passwordId)}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col lg={6}>
-                        <Button onClick={this.newPasswordButtonClick}>
-                            New Password
-                        </Button>
-                    </Col>
-                </Row>
-            </Container>
+            return (
+                <PasswordListDisplay newPasswordButtonClick={this.newPasswordButtonClick}
+                    passwordList={this.state.passwordList}
+                    displayPassword={this.displayPassword}
+                    deletePassword={this.deletePassword} />
+            )
         } else if(this.state.hash == 'newPassword') {
             return <Container className="show-grid">
                 <Row>

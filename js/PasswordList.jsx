@@ -4,19 +4,13 @@ import {Row,Col,Button} from 'react-bootstrap'
 class PasswordList extends React.Component {
     constructor(props) {
         super(props)
-        this.state = { passwords: props.passwords }
     }
-
-    componentWillReceiveProps(nextProps) {
-        this.setState({passwords: nextProps.passwords})
-        this.forceUpdate()
-    }
-
 
     render() {
         const {
             displayPasswordCallback,
-            deletePasswordCallback
+            deletePasswordCallback,
+            passwords
         } = this.props
         return <div>
             <Row>
@@ -24,7 +18,7 @@ class PasswordList extends React.Component {
                     <h2>Passwords</h2>
                 </Col>
             </Row>
-            {this.state.passwords.map(password => <Row key={password.passwordId}>
+            {passwords.map(password => <Row key={password.passwordId}>
                 <Col lg={6}>
                     <a onClick={() => {
                         displayPasswordCallback(password.passwordId)

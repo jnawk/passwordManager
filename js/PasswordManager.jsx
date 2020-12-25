@@ -1,9 +1,8 @@
-import Login from './Login.jsx';
-
 import React from 'react'
 import { Container, Row, Col, Button} from 'react-bootstrap'
 import PasswordList from './PasswordList.jsx'
 import Password from './Password.jsx'
+import LoginPage from './LoginPage.jsx'
 import V2API from './passwordManagerAPIs.js'
 
 const getHash = () => {
@@ -155,26 +154,12 @@ class PasswordManager extends React.Component {
         }
         window.location.hash = this.state.hash
         if(this.state.hash == 'login' || !this.state.passwordList) {
-            return <Container className="show-grid">
-                <Row>
-                    <Col lg={6}>
-                        <Login
-                            callback={this.receiveCredentials}
-                            enterCallback={this.loginButtonClick}/>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col lg={12}>
-                        <Row>
-                            <Col lg={12}>
-                                <Button onClick={this.loginButtonClick}>
-                                    Login
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-            </Container>;
+            return (
+                <LoginPage callback={this.receiveCredentials}
+                    enterCallback={this.loginButtonClick}
+                    loginButtonClick={this.loginButtonClick}
+                />
+            )
         } else if (this.state.hash.startsWith('display') && this.state.password) {
             return <Container className="show-grid">
                 <Row>

@@ -14,6 +14,10 @@ class PasswordList extends React.Component {
 
 
     render() {
+        const {
+          displayPasswordCallback,
+          deletePasswordCallback
+        } = this.props
         return <div>
             <Row>
                 <Col lg={6}>
@@ -23,13 +27,16 @@ class PasswordList extends React.Component {
             {this.state.passwords.map(password => <Row key={password.passwordId}>
                 <Col lg={6}>
                     <a onClick={() => {
-                        this.props.displayPasswordCallback(password.passwordId);
+                        displayPasswordCallback(password.passwordId);
                         return false;
                     }}>{password.description}</a>
                 </Col>
                 <Col lg={2}>
                     <Button onClick={() => {
-                        this.props.deletePasswordCallback(password.passwordId);
+                        // TODO make this something appearing in the markup
+                        if(confirm(`Delete '${password.description}'?`)) {
+                            deletePasswordCallback(password.passwordId);
+                        }
                     }}>Delete</Button>
                 </Col>
             </Row>)}

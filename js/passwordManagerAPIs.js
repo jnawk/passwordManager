@@ -84,8 +84,8 @@ class V2API {
                 }
             ).then(response => response.json()
             ).then(response => {
-              localStorage.setItem('token', response.token);
-              return response;
+                localStorage.setItem('token', response.token);
+                return response;
             });
         };
 

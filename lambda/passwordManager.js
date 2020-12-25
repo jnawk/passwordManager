@@ -1,28 +1,28 @@
-'use strict';
-const crypto = require('crypto');
+'use strict'
+const crypto = require('crypto')
 
-const AWS = require('aws-sdk');
-const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+const AWS = require('aws-sdk')
+const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'})
 
-const systemKey = process.env.systemKey;
-const acceptingNewUsers = process.env.acceptingNewMembers;
+const systemKey = process.env.systemKey
+const acceptingNewUsers = process.env.acceptingNewMembers
 
 const corsHeaders = {
     'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
     'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
     'Access-Control-Allow-Origin': '*'
-};
+}
 
 exports.getPasswordDetails = (event, context) => {
-    event = JSON.parse(event.body);
+    event = JSON.parse(event.body)
     validateToken(event, (err, data) => {
         if(err) {
-            console.log(err);
-            context.fail(err);
+            console.log(err)
+            context.fail(err)
         } else {
-            const newToken = data.token;
-            const user = data.user;
-            const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
+            const newToken = data.token
+            const user = data.user
+            const userKey = decrypt(user.sysEncryptedKey.S, systemKey)
             dynamodb.getItem({
                 Key: {
                     'passwordId': { S: event.passwordId },
@@ -31,7 +31,7 @@ exports.getPasswordDetails = (event, context) => {
                 TableName: 'passwordManager-passwords'
             }, (err, data) => {
                 if(err) {
-                    context.fail(err);
+                    context.fail(err)
                 } else {
                     context.succeed({
                         statusCode: 200,
@@ -42,22 +42,22 @@ exports.getPasswordDetails = (event, context) => {
                             username: decrypt(data.Item.username.S, userKey),
                             password: decrypt(data.Item.password.S, userKey)
                         })
-                    });
+                    })
                 }
-            });
+            })
         }
-    });
-};
+    })
+}
 
 exports.deletePassword = (event, context) => {
-    event = JSON.parse(event.body);
+    event = JSON.parse(event.body)
     validateToken(event, (err, data) => {
         if(err) {
-            console.log(err);
-            context.fail(err);
+            console.log(err)
+            context.fail(err)
         } else {
-            const newToken = data.token;
-            const user = data.user;
+            const newToken = data.token
+            const user = data.user
             // const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
             dynamodb.deleteItem({
                 Key: {
@@ -67,29 +67,29 @@ exports.deletePassword = (event, context) => {
                 TableName: 'passwordManager-passwords'
             }, (err/*, data*/) => {
                 if(err) {
-                    context.fail(err);
+                    context.fail(err)
                 } else {
                     context.succeed({
                         statusCode: 200,
                         headers: corsHeaders,
                         body: JSON.stringify({token: newToken})
-                    });
+                    })
                 }
-            });
+            })
         }
-    });
-};
+    })
+}
 
 exports.getPasswords = (event, context) => {
-    event = JSON.parse(event.body);
+    event = JSON.parse(event.body)
     validateToken(event, (err, data) => {
         if(err) {
-            console.log(err);
-            context.fail(err);
+            console.log(err)
+            context.fail(err)
         } else {
-            const newToken = data.token;
-            const user = data.user;
-            const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
+            const newToken = data.token
+            const user = data.user
+            const userKey = decrypt(user.sysEncryptedKey.S, systemKey)
             dynamodb.query({
                 KeyConditionExpression: 'userName = :str',
                 ExpressionAttributeValues: { ':str': { S: data.user.userName.S } },
@@ -97,15 +97,15 @@ exports.getPasswords = (event, context) => {
                 IndexName: 'userName-index'
             }, (err, data) => {
                 if(err) {
-                    context.fail(err);
+                    context.fail(err)
                 } else {
-                    var passwords = Array();
+                    var passwords = Array()
                     data.Items.forEach((password) => {
                         passwords.push({
                             passwordId: password.passwordId.S,
                             description: decrypt(password.description.S, userKey)
-                        });
-                    });
+                        })
+                    })
                     context.succeed({
                         statusCode: 200,
                         headers: corsHeaders,
@@ -113,35 +113,35 @@ exports.getPasswords = (event, context) => {
                             token: newToken,
                             passwords: passwords
                         })
-                    });
+                    })
                 }
-            });
+            })
         }
-    });
-};
+    })
+}
 
 exports.putPassword = (event, context) => {
-    event = JSON.parse(event.body);
-    console.log('about to validate token');
+    event = JSON.parse(event.body)
+    console.log('about to validate token')
     validateToken(event, (err, data) => {
         if(err) {
-            console.log(err);
-            context.fail(err);
+            console.log(err)
+            context.fail(err)
         } else {
-            const newToken = data.token;
-            var passwordId;
+            const newToken = data.token
+            var passwordId
             if('undefined' == typeof event.passwordId) {
                 // new password
-                const passwordHash = crypto.createHash('sha1').update(event.description).digest('base64');
+                const passwordHash = crypto.createHash('sha1').update(event.description).digest('base64')
                 passwordId = JSON.stringify({
                     hash: passwordHash,
                     createDateTime: new Date().getTime()
-                });
+                })
             } else {
                 // existing password
-                passwordId = event.passwordId;
+                passwordId = event.passwordId
             }
-            const decryptedUserKey = decrypt(data.user.sysEncryptedKey.S, systemKey);
+            const decryptedUserKey = decrypt(data.user.sysEncryptedKey.S, systemKey)
             dynamodb.updateItem({
                 TableName: 'passwordManager-passwords',
                 Key: {
@@ -161,7 +161,7 @@ exports.putPassword = (event, context) => {
                 }
             }, (err/*, data*/) => {
                 if(err) {
-                    context.fail(err);
+                    context.fail(err)
                 } else {
                     context.succeed({
                         statusCode: 200,
@@ -170,112 +170,112 @@ exports.putPassword = (event, context) => {
                             token: newToken,
                             passwordId: passwordId
                         })
-                    });
+                    })
                 }
-            });
+            })
         }
-    });
-};
+    })
+}
 
 exports.signup = (event, context) => {
-    event = JSON.parse(event.body);
-    const username = event.username;
-    const password = event.password;
+    event = JSON.parse(event.body)
+    const username = event.username
+    const password = event.password
 
     if('true' != acceptingNewUsers) {
         context.succeed({
             statusCode: 403,
             headers: corsHeaders,
             body: 'Not accepting new users'
-        });
+        })
     } else {
         dynamodb.getItem({
             Key: { userName: { S: username } },
             TableName: 'passwordManager-users'
         }, (err, data) => {
             if(err) {
-                context.fail(err);
+                context.fail(err)
             } else {
                 if(null != data.Item) {
                     context.succeec({
                         statusCode: 409,
                         headers: corsHeaders,
                         body: 'Username ' + username + ' is already taken'
-                    });
+                    })
                 } else {
                     // no user
                     // generate user's key, encrypt wth system key
                     crypto.randomBytes(48, (ex, buf) => {
-                        const key = buf.toString('base64');
-                        const encryptedKey = encrypt(key, password);
-                        const encryptedUsername = encrypt(username, key);
-                        const sysEncryptedKey = encrypt(key, systemKey);
+                        const key = buf.toString('base64')
+                        const encryptedKey = encrypt(key, password)
+                        const encryptedUsername = encrypt(username, key)
+                        const sysEncryptedKey = encrypt(key, systemKey)
                         const user = {
                             userName: { S: username },
                             encryptedKey: { S: encryptedKey },
                             encryptedUsername: { S: encryptedUsername },
                             sysEncryptedKey: { S: sysEncryptedKey }
-                        };
+                        }
                         dynamodb.putItem({
                             TableName: 'passwordManager-users',
                             Item: user
                         }, (err/*, data*/) => {
                             if(err) {
-                                context.fail(err);
+                                context.fail(err)
                             } else {
                                 const token = encrypt(JSON.stringify({
                                     timestamp: new Date().getTime(),
                                     user: username
-                                }), systemKey);
+                                }), systemKey)
                                 context.succeed({
                                     statusCode: 200,
                                     headers: corsHeaders,
                                     body: JSON.stringify({token: token})
-                                });
+                                })
                             }
-                        });
-                    });
+                        })
+                    })
                 }
             }
-        });
+        })
     }
-};
+}
 
 exports.acceptingNewMembers = (event, context) => {
     context.succeed({
         statusCode: 200,
         headers: corsHeaders,
         body: JSON.stringify({S: acceptingNewUsers})
-    });
-};
+    })
+}
 
 exports.login = (event, context) => {
-    event = JSON.parse(event.body);
-    const username = event.username;
-    const password = event.password;
+    event = JSON.parse(event.body)
+    const username = event.username
+    const password = event.password
 
     dynamodb.getItem({
         Key: { userName: { S: username } },
         TableName: 'passwordManager-users'
     }, (err, data) => {
         if(err) {
-            context.fail(err);
+            context.fail(err)
         } else {
             if(typeof data.Item == 'undefined') {
-                console.log('no data returned');
+                console.log('no data returned')
                 context.succeed({
                     statusCode: 401,
                     headers: corsHeaders,
                     body: 'Login failure'
-                });
+                })
             } else {
                 try {
-                    console.log(data.Item);
+                    console.log(data.Item)
                     // decrypt user's encrypted key with user's password
-                    var decryptedUserKey = decrypt(data.Item.encryptedKey.S, password);
+                    var decryptedUserKey = decrypt(data.Item.encryptedKey.S, password)
 
                     // decrypt encrypted username with user's key
-                    var decryptedUsername = decrypt(data.Item.encryptedUsername.S, decryptedUserKey);
+                    var decryptedUsername = decrypt(data.Item.encryptedUsername.S, decryptedUserKey)
 
                     if(username != decryptedUsername) {
                         // user's password fails to decrypt user's key,
@@ -284,74 +284,74 @@ exports.login = (event, context) => {
                             statusCode: 401,
                             headers: corsHeaders,
                             body: 'Login failure'
-                        });
+                        })
                     } else {
                         // user's password descrypts user's key which subsequently decrypts encyrpted username
                         // password must be right.
                         var token = encrypt(JSON.stringify({
                             timestamp: new Date().getTime(),
                             user: username
-                        }), systemKey);
-                        console.log('returning token');
+                        }), systemKey)
+                        console.log('returning token')
                         context.succeed({
                             statusCode: 200,
                             headers: corsHeaders,
                             body: JSON.stringify({token: token})
-                        });
+                        })
                     }
                 } catch (ex) {
-                    console.log(ex);
-                    context.fail('Login failure');
+                    console.log(ex)
+                    context.fail('Login failure')
                 }
             }
         }
-    });
-};
+    })
+}
 
 const validateToken = (event, callback) => {
-    var decryptedToken = JSON.parse(decrypt(event.token, systemKey));
-    var oldestAcceptableToken = new Date().getTime() - (1000 * 60 * 15);
+    var decryptedToken = JSON.parse(decrypt(event.token, systemKey))
+    var oldestAcceptableToken = new Date().getTime() - (1000 * 60 * 15)
     if(decryptedToken.timestamp < oldestAcceptableToken) {
-        callback(new Error('session expired'));
+        callback(new Error('session expired'))
     } else {
         try {
-            console.log(decryptedToken);
-            var username = decryptedToken.user;
+            console.log(decryptedToken)
+            var username = decryptedToken.user
             dynamodb.getItem({
                 Key: { userName: { S: username } },
                 TableName: 'passwordManager-users'
             }, function(err, data) {
                 if(err) {
-                    callback(err);
+                    callback(err)
                 } else {
                     var newToken = encrypt(JSON.stringify({
                         timestamp: new Date().getTime(),
                         user: username
-                    }), systemKey);
+                    }), systemKey)
                     callback(null, {
                         token: newToken,
                         user: data.Item,
                         systemKey: systemKey
-                    });
+                    })
                 }
-            });
+            })
         } catch (ex) {
-            console.log(ex);
-            callback(new Error('token failure'));
+            console.log(ex)
+            callback(new Error('token failure'))
         }
     }
-};
+}
 
 const encrypt = (data, password) => {
-    const cipher = crypto.createCipher('aes192', new Buffer(password, 'binary'));
-    var buf = cipher.update(data, 'utf-8', 'base64');
-    buf += cipher.final('base64');
-    return buf;
-};
+    const cipher = crypto.createCipher('aes192', new Buffer(password, 'binary'))
+    var buf = cipher.update(data, 'utf-8', 'base64')
+    buf += cipher.final('base64')
+    return buf
+}
 
 const decrypt = (data, password) => {
-    const cipher = crypto.createDecipher('aes192', new Buffer(password, 'binary'));
-    var buf = cipher.update(data, 'base64', 'utf-8');
-    buf += cipher.final('utf-8');
-    return buf;
-};
+    const cipher = crypto.createDecipher('aes192', new Buffer(password, 'binary'))
+    var buf = cipher.update(data, 'base64', 'utf-8')
+    buf += cipher.final('utf-8')
+    return buf
+}

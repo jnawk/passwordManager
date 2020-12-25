@@ -2,6 +2,7 @@ import React from 'react'
 import { Container, Row, Col, Button} from 'react-bootstrap'
 import PasswordList from './PasswordList.jsx'
 import Password from './Password.jsx'
+import PasswordDisplay from './PasswordDisplay.jsx'
 import LoginPage from './LoginPage.jsx'
 import V2API from './passwordManagerAPIs.js'
 
@@ -161,16 +162,11 @@ class PasswordManager extends React.Component {
                 />
             )
         } else if (this.state.hash.startsWith('display') && this.state.password) {
-            return <Container className="show-grid">
-                <Row>
-                    <Col lg={6}>
-                        <Password
-                            password={this.state.password}
-                            goBack={this.closePasswordButtonClick}
-                            savePassword={this.savePassword}/>
-                    </Col>
-                </Row>
-            </Container>
+            return (
+                <PasswordDisplay password={this.state.password}
+                    goBack={this.closePasswordButtonClick}
+                    savePassword={this.savePassword}/>
+            )
         } else if(this.state.hash == '' && this.state.passwordList) {
             return <Container className="show-grid">
                 <Row>

@@ -1,33 +1,54 @@
 import React from 'react'
-import { Row, Col } from 'react-bootstrap'
-
+import { Container, Row, Col, Button} from 'react-bootstrap'
 import PasswordListEntry from './PasswordListEntry.jsx'
+
+const autoBind = require('auto-bind')
 
 class PasswordList extends React.Component {
     constructor(props) {
         super(props)
+        autoBind(this)
     }
 
     render() {
         const {
-            displayPasswordCallback,
-            deletePasswordCallback,
-            passwords
+            newPasswordButtonClick,
+            passwordList,
+            displayPassword,
+            deletePassword
         } = this.props
-        return <div>
+
+        return <Container className="show-grid">
             <Row>
-                <Col lg={8}>
-                    <h2>Passwords</h2>
+                <Col lg={6}>
+                    <Button onClick={newPasswordButtonClick}>
+                            New Password
+                    </Button>
                 </Col>
             </Row>
-            {passwords.map(password => (
-                <PasswordListEntry key={password.passwordId}
-                    password={password}
-                    displayPasswordCallback={displayPasswordCallback}
-                    deletePasswordCallback={deletePasswordCallback} />
-            ))}
-
-        </div>
+            <Row>
+                <Col lg={6}>
+                    <Row>
+                        <Col lg={8}>
+                            <h2>Passwords</h2>
+                        </Col>
+                    </Row>
+                    {passwordList.map(password => (
+                        <PasswordListEntry key={password.passwordId}
+                            password={password}
+                            displayPasswordCallback={passwordId => displayPassword(passwordId)}
+                            deletePasswordCallback={passwordId => deletePassword(passwordId)} />
+                    ))}
+                </Col>
+            </Row>
+            <Row>
+                <Col lg={6}>
+                    <Button onClick={newPasswordButtonClick}>
+                            New Password
+                    </Button>
+                </Col>
+            </Row>
+        </Container>
     }
 }
 

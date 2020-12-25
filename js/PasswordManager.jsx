@@ -5,7 +5,7 @@ import V2API from './passwordManagerAPIs.js'
 import LoginPage from './LoginPage.jsx'
 import NewPassword from './NewPassword.jsx'
 import PasswordDisplay from './PasswordDisplay.jsx'
-import PasswordListDisplay from './PasswordListDisplay.jsx'
+import PasswordList from './PasswordList.jsx'
 
 const getHash = () => {
     var hash = window.location.hash
@@ -170,7 +170,7 @@ class PasswordManager extends React.Component {
             )
         } else if(this.state.hash == '' && this.state.passwordList) {
             return (
-                <PasswordListDisplay newPasswordButtonClick={this.newPasswordButtonClick}
+                <PasswordList newPasswordButtonClick={this.newPasswordButtonClick}
                     passwordList={this.state.passwordList}
                     displayPassword={this.displayPassword}
                     deletePassword={this.deletePassword} />

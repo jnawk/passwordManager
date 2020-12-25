@@ -1,5 +1,7 @@
 import React from 'react'
-import {Row,Col,Button} from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
+
+import PasswordListEntry from './PasswordListEntry.jsx'
 
 class PasswordList extends React.Component {
     constructor(props) {
@@ -18,22 +20,13 @@ class PasswordList extends React.Component {
                     <h2>Passwords</h2>
                 </Col>
             </Row>
-            {passwords.map(password => <Row key={password.passwordId}>
-                <Col lg={6}>
-                    <a onClick={() => {
-                        displayPasswordCallback(password.passwordId)
-                        return false
-                    }}>{password.description}</a>
-                </Col>
-                <Col lg={2}>
-                    <Button onClick={() => {
-                        // TODO make this something appearing in the markup
-                        if(confirm(`Delete '${password.description}'?`)) {
-                            deletePasswordCallback(password.passwordId)
-                        }
-                    }}>Delete</Button>
-                </Col>
-            </Row>)}
+            {passwords.map(password => (
+                <PasswordListEntry key={password.passwordId}
+                    password={password}
+                    displayPasswordCallback={displayPasswordCallback}
+                    deletePasswordCallback={deletePasswordCallback} />
+            ))}
+
         </div>
     }
 }

@@ -1,10 +1,9 @@
 import React from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
 
 import V2API from './passwordManagerAPIs.js'
 
 import LoginPage from './LoginPage.jsx'
-import Password from './Password.jsx'
+import NewPassword from './NewPassword.jsx'
 import PasswordDisplay from './PasswordDisplay.jsx'
 import PasswordListDisplay from './PasswordListDisplay.jsx'
 
@@ -177,15 +176,10 @@ class PasswordManager extends React.Component {
                     deletePassword={this.deletePassword} />
             )
         } else if(this.state.hash == 'newPassword') {
-            return <Container className="show-grid">
-                <Row>
-                    <Col lg={6}>
-                        <Password
-                            goBack={this.closePasswordButtonClick}
-                            savePassword={this.savePassword}/>
-                    </Col>
-                </Row>
-            </Container>
+            return (
+                <NewPassword closePasswordButtonClick={this.closePasswordButtonClick}
+                    savePassword={this.savePassword} />
+            )
         }
         return null
     }

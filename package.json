@@ -16,12 +16,6 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "bootstrap": "^4.3.1",
-    "react-bootstrap": "^0.32.4",
-    "react-google-login": "^4.0.0",
-    "react-numeric-input": "^2.2.0"
   },
   "jshintConfig": {
     "esversion": 6
@@ -32,12 +26,17 @@
     "@babel/preset-react": "^7.12.10",
     "babel-loader": "^8.2.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "bootstrap": "^4.5.3",
     "css-loader": "^5.0.1",
     "eslint": "^7.16.0",
     "eslint-plugin-react": "^7.21.5",
     "file-loader": "^6.2.0",
     "react": "^17.0.1",
+    "react-bootstrap": "^1.4.0",
     "react-dom": "^17.0.1",
+    "react-numeric-input": "^2.2.3",
     "style-loader": "^2.0.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.11.0",

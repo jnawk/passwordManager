@@ -1,6 +1,5 @@
 import React from 'react';
-import {Grid,Row,Col,Button} from 'react-bootstrap';
-
+import { Container, Row, Col, Button} from 'react-bootstrap';
 import Login from './Login.jsx';
 import PasswordList from './PasswordList.jsx';
 import Password from './Password.jsx';
@@ -156,7 +155,7 @@ class PasswordManager extends React.Component {
         }
         window.location.hash = this.state.hash;
         if(this.state.hash == 'login' || !this.state.passwordList) {
-            return <Grid className="show-grid">
+            return <Container className="show-grid">
                 <Row>
                     <Col lg={6}>
                         <Login
@@ -175,9 +174,9 @@ class PasswordManager extends React.Component {
                         </Row>
                     </Col>
                 </Row>
-            </Grid>;
+            </Container>;
         } else if (this.state.hash.startsWith('display') && this.state.password) {
-            return <Grid className="show-grid">
+            return <Container className="show-grid">
                 <Row>
                     <Col lg={6}>
                         <Password
@@ -186,9 +185,9 @@ class PasswordManager extends React.Component {
                             savePassword={this.savePassword}/>
                     </Col>
                 </Row>
-            </Grid>;
+            </Container>;
         } else if(this.state.hash == '' && this.state.passwordList) {
-            return <Grid className="show-grid">
+            return <Container className="show-grid">
                 <Row>
                     <Col lg={6}>
                         <Button onClick={this.newPasswordButtonClick}>
@@ -212,9 +211,9 @@ class PasswordManager extends React.Component {
                         </Button>
                     </Col>
                 </Row>
-            </Grid>;
+            </Container>;
         } else if(this.state.hash == 'newPassword') {
-            return <Grid className="show-grid">
+            return <Container className="show-grid">
                 <Row>
                     <Col lg={6}>
                         <Password
@@ -222,7 +221,7 @@ class PasswordManager extends React.Component {
                             savePassword={this.savePassword}/>
                     </Col>
                 </Row>
-            </Grid>;
+            </Container>;
         }
         return null;
     }

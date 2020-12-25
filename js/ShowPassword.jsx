@@ -4,7 +4,7 @@ import Password from './Password.jsx'
 
 const autoBind = require('auto-bind')
 
-class PasswordDisplay extends React.Component {
+class ShowPassword extends React.Component {
     constructor(props) {
         super(props)
         autoBind(this)
@@ -27,4 +27,4 @@ class PasswordDisplay extends React.Component {
     }
 }
 
-export default PasswordDisplay
+export default ShowPassword

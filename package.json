@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "lint": "eslint js lambda",
-    "lint:fix": "eslint js lambda --fix"
+    "lint": "eslint js/*js{,x} lambda/*js",
+    "lint:fix": "eslint js/*js{,x} lambda/*js --fix"
   },
   "author": "Philip Dowie",
   "repository": {
@@ -15,8 +15,7 @@
     "url": "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/passwordManager"
   },
   "license": "UNLICENSED",
-  "dependencies": {
-  },
+  "dependencies": {},
   "jshintConfig": {
     "esversion": 6
   },
@@ -24,9 +23,9 @@
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
+    "babel-core": "^6.26.3",
     "babel-loader": "^8.2.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "bootstrap": "^4.5.3",
     "css-loader": "^5.0.1",

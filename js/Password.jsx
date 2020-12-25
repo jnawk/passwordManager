@@ -1,25 +1,25 @@
-import React from 'react';
-import {Row,Col,Button} from 'react-bootstrap';
+import React from 'react'
+import {Row,Col,Button} from 'react-bootstrap'
 
 class Password extends React.Component {
     constructor(props) {
-        super(props);
+        super(props)
 
-        var pw = this.props.password;
+        var pw = this.props.password
         if(pw) {
             this.state = {
                 description: pw.description,
                 username: pw.username,
                 password: pw.password,
                 passwordId: pw.passwordId
-            };
+            }
         } else {
-            this.state = {edit: true};
+            this.state = {edit: true}
         }
 
         this.edit_buttonClick = () => {
-            this.setState({edit: true});
-        };
+            this.setState({edit: true})
+        }
 
         this.save_buttonClick = () => {
             this.props.savePassword(this.state.passwordId, {
@@ -28,51 +28,51 @@ class Password extends React.Component {
                 password: this.state.password
             }).then(response => {
                 if(!this.state.passwordId) {
-                    this.setState({passwordId: response.passwordId});
+                    this.setState({passwordId: response.passwordId})
                 }
-                this.setState({edit: false});
-            });
-        };
+                this.setState({edit: false})
+            })
+        }
 
     }
 
     render() {
 
-        var description = this.state.description;
-        var username = this.state.username;
-        var password = this.state.password;
-        var saveEdit;
+        var description = this.state.description
+        var username = this.state.username
+        var password = this.state.password
+        var saveEdit
 
         if(this.state.edit) {
             description = <input
                 type="text"
                 id="description"
                 onChange={event => this.setState({description: event.target.value})}
-                value={description}/>;
+                value={description}/>
 
             username = <input
                 type="text"
                 id="username"
                 onChange={event => this.setState({username: event.target.value})}
-                value={username}/>;
+                value={username}/>
 
             password = <input
                 type="text"
                 id="password"
                 onChange={event => this.setState({password: event.target.value})}
-                value={password}/>;
+                value={password}/>
 
             saveEdit = <Button
                 id="save"
                 onClick={this.save_buttonClick}>
                     Save
-            </Button>;
+            </Button>
         } else {
             saveEdit = <Button
                 id="edit"
                 onClick={this.edit_buttonClick}>
                     Edit
-            </Button>;
+            </Button>
         }
 
         return <div>
@@ -94,8 +94,8 @@ class Password extends React.Component {
                 </Col>
                 <Col lg={6}>{saveEdit}</Col>
             </Row>
-        </div>;
+        </div>
     }
 }
 
-export default Password;
+export default Password

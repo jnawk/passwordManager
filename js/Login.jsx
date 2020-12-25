@@ -1,9 +1,9 @@
-import React from 'react';
-import {Row,Col} from 'react-bootstrap';
+import React from 'react'
+import {Row,Col} from 'react-bootstrap'
 
 class Login extends React.Component {
     constructor(props) {
-        super(props);
+        super(props)
     }
 
     render() {
@@ -33,13 +33,13 @@ class Login extends React.Component {
                         onChange={event => this.props.callback('password', event.target.value)}
                         onKeyPress={target => {
                             if(target.charCode == 13) {
-                                this.props.enterCallback();
+                                this.props.enterCallback()
                             }
                         }}/>
                 </Col>
             </Row>
-        </div>;
+        </div>
     }
 }
 
-export default Login;
+export default Login

@@ -1,10 +1,10 @@
 const passwordSort = (left, right) => {
-    return left.description.localeCompare(right.description);
-};
+    return left.description.localeCompare(right.description)
+}
 
 class V2API {
     constructor(endpoint) {
-        this.endpoint = endpoint;
+        this.endpoint = endpoint
 
         this.login = (username, password) => {
             return fetch(
@@ -20,13 +20,13 @@ class V2API {
                     })
                 }
             ).then(response => response.json()
-            ).then(response => localStorage.setItem('token', response.token));
-        };
+            ).then(response => localStorage.setItem('token', response.token))
+        }
 
         this.sortPasswords = passwordList => {
-            passwordList.sort(passwordSort);
-            return passwordList;
-        };
+            passwordList.sort(passwordSort)
+            return passwordList
+        }
 
         this.deletePassword = passwordId => {
             return fetch(
@@ -42,12 +42,12 @@ class V2API {
                     method: 'POST'
                 }
             ).then(response => response.json()
-            ).then(response => localStorage.setItem('token', response.token));
-        };
+            ).then(response => localStorage.setItem('token', response.token))
+        }
 
         this.getPasswordList = () => {
             if(!localStorage.token) {
-                return Promise.reject('not logged in');
+                return Promise.reject('not logged in')
             } else {
                 return fetch(
                     this.endpoint + '/getPasswords',
@@ -60,12 +60,12 @@ class V2API {
                     }
                 ).then(response => response.json()
                 ).then(response => {
-                    localStorage.setItem('token', response.token);
-                    response.passwords.sort(passwordSort);
-                    return response.passwords;
-                });
+                    localStorage.setItem('token', response.token)
+                    response.passwords.sort(passwordSort)
+                    return response.passwords
+                })
             }
-        };
+        }
 
         this.createPassword = password => {
             return fetch(
@@ -84,10 +84,10 @@ class V2API {
                 }
             ).then(response => response.json()
             ).then(response => {
-                localStorage.setItem('token', response.token);
-                return response;
-            });
-        };
+                localStorage.setItem('token', response.token)
+                return response
+            })
+        }
 
         this.updatePassword = (passwordId, password) => {
             return fetch(
@@ -106,8 +106,8 @@ class V2API {
                     method: 'PUT'
                 }
             ).then(response => response.json()
-            ).then(response => localStorage.setItem('token', response.token));
-        };
+            ).then(response => localStorage.setItem('token', response.token))
+        }
 
         this.fetchPassword = passwordId => {
             return fetch(
@@ -123,13 +123,13 @@ class V2API {
                     method: 'POST'
                 }
             ).then(response => response.json()).then(response => {
-                localStorage.setItem('token', response.token);
-                delete response.token;
-                response['passwordId'] = btoa(passwordId);
-                return {password: response};
-            });
-        };
+                localStorage.setItem('token', response.token)
+                delete response.token
+                response['passwordId'] = btoa(passwordId)
+                return {password: response}
+            })
+        }
     }
 }
 
-export default V2API;
+export default V2API

@@ -12,7 +12,7 @@ const autoBind = require('auto-bind')
 
 import V2API from './passwordManagerAPIs.js'
 
-import LoginPage from './LoginPage.jsx'
+import Login from './Login.jsx'
 import NewPassword from './NewPassword.jsx'
 import PasswordList from './PasswordList.jsx'
 import ShowPassword from './ShowPassword.jsx'
@@ -51,7 +51,7 @@ class PasswordManager extends React.Component {
                 <Router>
                     <Switch>
                         <Route exact path="/login">
-                            <LoginPage v2API={this.v2API} />
+                            <Login v2API={this.v2API} />
                         </Route>
                         <Route exact path="/">
                             <PasswordList v2API={this.v2API} />

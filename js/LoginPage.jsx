@@ -7,7 +7,7 @@ const autoBind = require('auto-bind')
 class LoginPage extends React.Component {
     constructor(props) {
         super(props)
-
+        this.state = {}
         autoBind(this)
     }
     ////////////////////
@@ -15,21 +15,13 @@ class LoginPage extends React.Component {
     ////////////////////
 
     loginButtonClick() {
-        const credentials = this.state.credentials
-        const hash = this.state.target || ''
-        this.v2API.login(credentials.username, credentials.password).then(() => {
-            Promise.all([
-                this.getPasswordList(),
-                this.loadStateForHash(hash)
-            ]).then(([passwordList, state]) => {
-                this.setState(Object.assign({
-                    passwordList: passwordList,
-                    credentials: null,
-                    hash: hash
-                }, state))
-            })
+        const { v2API } = this.props
+        const { credentials } = this.state
+        v2API.login(credentials.username, credentials.password).then(() => {
+            // TODO redirect to where we were
+            window.location.hash='/'
         }).catch(() => {
-            this.setState({hash: 'login'})
+            // login failed....
         })
     }
 
@@ -41,22 +33,19 @@ class LoginPage extends React.Component {
     }
 
     render() {
-        const {
-            callback, enterCallback, loginButtonClick
-        } = this.props
         return (
             <Container className="show-grid">
                 <Row>
                     <Col lg={6}>
-                        <Login callback={callback}
-                            enterCallback={enterCallback} />
+                        <Login callback={this.receiveCredentials}
+                            enterCallback={this.loginButtonClick} />
                     </Col>
                 </Row>
                 <Row>
                     <Col lg={12}>
                         <Row>
                             <Col lg={12}>
-                                <Button onClick={loginButtonClick}>
+                                <Button onClick={this.loginButtonClick}>
                                     Login
                                 </Button>
                             </Col>

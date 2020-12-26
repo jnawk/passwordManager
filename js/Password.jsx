@@ -4,7 +4,6 @@ import {Row,Col,Button} from 'react-bootstrap'
 class Password extends React.Component {
     constructor(props) {
         super(props)
-
         var pw = this.props.password
         if(pw) {
             this.state = {
@@ -37,11 +36,8 @@ class Password extends React.Component {
     }
 
     render() {
-
-        var description = this.state.description
-        var username = this.state.username
-        var password = this.state.password
-        var saveEdit
+        let { description, username, password } = this.state
+        let saveEdit
 
         if(this.state.edit) {
             description = <input
@@ -90,7 +86,9 @@ class Password extends React.Component {
             </Row>
             <Row>
                 <Col lg={3}>
-                    <Button onClick={this.props.goBack}>Go Back</Button>
+                    <Button onClick={() => window.location.hash='/'}>
+                      Go Back
+                    </Button>
                 </Col>
                 <Col lg={6}>{saveEdit}</Col>
             </Row>

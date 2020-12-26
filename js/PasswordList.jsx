@@ -7,21 +7,45 @@ const autoBind = require('auto-bind')
 class PasswordList extends React.Component {
     constructor(props) {
         super(props)
+        this.state = {}
         autoBind(this)
     }
 
+    componentDidMount() {
+        this.getPasswordList()
+            .then(passwordList => this.setState({
+                passwordList: passwordList
+            }))
+            .catch(() => {
+                window.location.hash='#/login'
+            })
+    }
+
+    // returns password list
+    getPasswordList()  {
+        const { v2API } = this.props
+        return v2API.getPasswordList()
+    }
+
+    deletePassword(passwordId) {
+        const { v2API } = this.props
+        return v2API.deletePassword(passwordId).then(() => {
+            this.setState({passwordList: this.state.passwordList.filter(password => password.passwordId != passwordId)})
+        })
+    }
+
+
     render() {
-        const {
-            newPasswordButtonClick,
-            passwordList,
-            displayPassword,
-            deletePassword
-        } = this.props
+        const { passwordList } = this.state
+
+        if (!passwordList) {
+            return null
+        }
 
         return <Container className="show-grid">
             <Row>
                 <Col lg={6}>
-                    <Button onClick={newPasswordButtonClick}>
+                    <Button onClick={() => window.location.hash='/newPassword'}>
                             New Password
                     </Button>
                 </Col>
@@ -36,14 +60,14 @@ class PasswordList extends React.Component {
                     {passwordList.map(password => (
                         <PasswordListEntry key={password.passwordId}
                             password={password}
-                            displayPasswordCallback={passwordId => displayPassword(passwordId)}
-                            deletePasswordCallback={passwordId => deletePassword(passwordId)} />
+                            displayPasswordCallback={passwordId => window.location.hash=`/showPassword/${btoa(passwordId)}`}
+                            deletePasswordCallback={passwordId => this.deletePassword(passwordId)} />
                     ))}
                 </Col>
             </Row>
             <Row>
                 <Col lg={6}>
-                    <Button onClick={newPasswordButtonClick}>
+                    <Button onClick={() => window.location.hash='/newPassword'}>
                             New Password
                     </Button>
                 </Col>

@@ -11,13 +11,13 @@ class PasswordManager extends React.Component {
     }
 
     render() {
-        const { closePasswordButtonClick, savePassword } = this.props
+        const { savePassword } = this.props
 
         return <Container className="show-grid">
             <Row>
                 <Col lg={6}>
                     <Password
-                        goBack={closePasswordButtonClick}
+                        goBack={() => window.location.hash='/'}
                         savePassword={savePassword}/>
                 </Col>
             </Row>

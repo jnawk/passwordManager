@@ -17,7 +17,7 @@ class PasswordList extends React.Component {
                 passwordList: passwordList
             }))
             .catch(() => {
-                window.location.hash='#/login'
+                window.location.hash=`/login/${btoa('/')}`
             })
     }
 
@@ -30,7 +30,9 @@ class PasswordList extends React.Component {
     deletePassword(passwordId) {
         const { v2API } = this.props
         return v2API.deletePassword(passwordId).then(() => {
-            this.setState({passwordList: this.state.passwordList.filter(password => password.passwordId != passwordId)})
+            const { passwordList } = this.state
+            const newPasswordList = passwordList.filter(password => password.passwordId != passwordId)
+            this.setState({passwordList: newPasswordList})
         })
     }
 
@@ -60,7 +62,6 @@ class PasswordList extends React.Component {
                     {passwordList.map(password => (
                         <PasswordListEntry key={password.passwordId}
                             password={password}
-                            displayPasswordCallback={passwordId => window.location.hash=`/showPassword/${btoa(passwordId)}`}
                             deletePasswordCallback={passwordId => this.deletePassword(passwordId)} />
                     ))}
                 </Col>

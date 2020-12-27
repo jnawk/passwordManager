@@ -16,11 +16,11 @@ class ShowPassword extends React.Component {
         const { password, v2API } = this.props
         v2API.fetchPassword(atob(password))
             .then(password => this.setState(password))
-            .catch(()=>window.location.hash='/login')
+            .catch(() => window.location.hash = `/login/${btoa(window.location.hash)}`)
     }
 
     render() {
-        const { goBack, savePassword } = this.props
+        const { savePassword } = this.props
         const { password } = this.state
         if(!password) {
             return null
@@ -32,7 +32,6 @@ class ShowPassword extends React.Component {
                     <Col lg={6}>
                         <Password
                             password={password}
-                            goBack={goBack}
                             savePassword={savePassword} />
                     </Col>
                 </Row>

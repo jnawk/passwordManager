@@ -50,8 +50,8 @@ class PasswordManager extends React.Component {
             <Container fluid>
                 <Router>
                     <Switch>
-                        <Route exact path="/login">
-                            <Login v2API={this.v2API} />
+                        <Route path="/login/:hash">
+                            <LoginChild v2API={this.v2API} />
                         </Route>
                         <Route exact path="/">
                             <PasswordList v2API={this.v2API} />
@@ -71,6 +71,14 @@ class PasswordManager extends React.Component {
             </Container>
         )
     }
+}
+
+const LoginChild = (props) => {
+    const { v2API } = props
+    const { hash } = useParams()
+    return (
+        <Login v2API={v2API} hash={hash} />
+    )
 }
 
 const ShowPasswordChild = (props) => {

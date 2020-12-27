@@ -1,9 +1,7 @@
 import React from 'react'
 import { Container, Row, Col } from 'react-bootstrap'
 
-
 import Password from './Password.jsx'
-
 
 class PasswordManager extends React.Component {
     constructor(props) {

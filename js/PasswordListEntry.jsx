@@ -8,17 +8,15 @@ class PasswordList extends React.Component {
 
     render() {
         const {
-            displayPasswordCallback,
             deletePasswordCallback,
             password
         } = this.props
         return (
             <Row key={password.passwordId}>
                 <Col lg={6}>
-                    <a onClick={() => {
-                        displayPasswordCallback(password.passwordId)
-                        return false
-                    }}>{password.description}</a>
+                    <a href={`#/showPassword/${btoa(password.passwordId)}`}>
+                        {password.description}
+                    </a>
                 </Col>
                 <Col lg={2}>
                     <Button onClick={() => {

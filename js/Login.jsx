@@ -11,11 +11,11 @@ class Login extends React.Component {
     }
 
     loginButtonClick() {
-        const { v2API } = this.props
+        const { v2API, hash } = this.props
         const { credentials } = this.state
         v2API.login(credentials.username, credentials.password).then(() => {
             // TODO redirect to where we were
-            window.location.hash='/'
+            window.location.hash = atob(hash)
         }).catch(() => {
             this.setState({loginFailure: true})
         })

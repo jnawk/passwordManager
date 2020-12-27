@@ -13,6 +13,7 @@ class Login extends React.Component {
     loginButtonClick() {
         const { v2API, hash } = this.props
         const { credentials } = this.state
+        this.setState({loginFailure: false})
         v2API.login(credentials.username, credentials.password).then(() => {
             // TODO redirect to where we were
             window.location.hash = atob(hash)
@@ -29,6 +30,22 @@ class Login extends React.Component {
     }
 
     render() {
+        const { loginFailure } = this.state
+        let failureMessage = null
+        if(loginFailure) {
+            failureMessage = (
+                <Row>
+                    <Col lg={12}>
+                        <Row>
+                            <Col lg={12}>
+                          Computer Says no
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+            )
+        }
+
         return (
             <Container className="show-grid">
                 <Row>
@@ -74,6 +91,7 @@ class Login extends React.Component {
                         </Row>
                     </Col>
                 </Row>
+                {failureMessage}
             </Container>
         )
     }

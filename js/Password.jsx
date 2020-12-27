@@ -44,19 +44,19 @@ class Password extends React.Component {
                 type="text"
                 id="description"
                 onChange={event => this.setState({description: event.target.value})}
-                value={description}/>
+                value={description || ''}/>
 
             username = <input
                 type="text"
                 id="username"
                 onChange={event => this.setState({username: event.target.value})}
-                value={username}/>
+                value={username || ''}/>
 
             password = <input
                 type="text"
                 id="password"
                 onChange={event => this.setState({password: event.target.value})}
-                value={password}/>
+                value={password || ''}/>
 
             saveEdit = <Button
                 id="save"

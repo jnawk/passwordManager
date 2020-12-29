@@ -53,9 +53,6 @@ class PasswordManager extends React.Component {
                         <Route path="/login/:hash">
                             <LoginChild v2API={this.v2API} />
                         </Route>
-                        <Route exact path="/">
-                            <PasswordList v2API={this.v2API} />
-                        </Route>
                         <Route path="/showPassword/:passwordId"
                             children={
                                 <ShowPasswordChild savePassword={this.savePassword}
@@ -65,6 +62,9 @@ class PasswordManager extends React.Component {
                         </Route>
                         <Route exact path="/newPassword">
                             <NewPassword savePassword={this.savePassword} />
+                        </Route>
+                        <Route path="*">
+                            <PasswordList v2API={this.v2API} />
                         </Route>
                     </Switch>
                 </Router>

@@ -2,6 +2,9 @@ import React from 'react'
 import { Row, Col, Button} from 'react-bootstrap'
 import PasswordListEntry from './PasswordListEntry.jsx'
 
+import './passwordsHeader.css'
+import './newPasswordButton.css'
+
 const autoBind = require('auto-bind')
 
 class PasswordList extends React.Component {
@@ -44,21 +47,14 @@ class PasswordList extends React.Component {
             return null
         }
 
-            <Row>
-                <Col lg={6}>
-                    <Button onClick={() => window.location.hash='/newPassword'}>
-                            New Password
-                    </Button>
         return <>
+            <Row className="passwordsHeader">
+                <Col lg={6} className="passwordsHeaderContent">
+                    <h2>Passwords</h2>
                 </Col>
             </Row>
             <Row>
                 <Col lg={6}>
-                    <Row>
-                        <Col lg={8}>
-                            <h2>Passwords</h2>
-                        </Col>
-                    </Row>
                     {passwordList.map(password => (
                         <PasswordListEntry key={password.passwordId}
                             password={password}
@@ -66,7 +62,7 @@ class PasswordList extends React.Component {
                     ))}
                 </Col>
             </Row>
-            <Row>
+            <Row className="newPasswordButton">
                 <Col lg={6}>
                     <Button onClick={() => window.location.hash='/newPassword'}>
                             New Password

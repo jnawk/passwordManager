@@ -15,12 +15,12 @@ class PasswordList extends React.Component {
         } = this.props
         return (
             <Row key={password.passwordId} className="passwordListEntry">
-                <Col lg={6}>
+                <Col xs={9} d={10}>
                     <a href={`#/showPassword/${btoa(password.passwordId)}`}>
                         {password.description}
                     </a>
                 </Col>
-                <Col lg={2}>
+                <Col xs={3} md={1}>
                     <Button onClick={() => {
                         // TODO make this something appearing in the markup
                         if(confirm(`Delete '${password.description}'?`)) {

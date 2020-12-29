@@ -1,6 +1,8 @@
 import React from 'react'
 import {Row,Col,Button} from 'react-bootstrap'
 
+import './passwordComponents.css'
+
 class Password extends React.Component {
     constructor(props) {
         super(props)
@@ -71,26 +73,26 @@ class Password extends React.Component {
             </Button>
         }
 
-        return <div>
+        return <div className="passwordComponents">
             <Row>
-                <Col lg={3}>Description</Col>
-                <Col lg={6}>{description}</Col>
+                <Col xs={12} sm={3} lg={3}>Description</Col>
+                <Col xs={12} sm={9} lg={6}>{description}</Col>
             </Row>
             <Row>
-                <Col lg={3}>Username</Col>
-                <Col lg={6}>{username}</Col>
+                <Col xs={12} sm={3} lg={3}>Username</Col>
+                <Col xs={12} sm={9} lg={6}>{username}</Col>
             </Row>
             <Row>
-                <Col lg={3}>Password</Col>
-                <Col lg={6}>{password}</Col>
+                <Col xs={12} sm={3} lg={3}>Password</Col>
+                <Col xs={12} sm={9} lg={6}>{password}</Col>
             </Row>
             <Row>
-                <Col lg={3}>
+                <Col xs={4} sm={3} lg={3}>
                     <Button onClick={() => window.location.hash='/'}>
                       Go Back
                     </Button>
                 </Col>
-                <Col lg={6}>{saveEdit}</Col>
+                <Col xs={4} lg={6}>{saveEdit}</Col>
             </Row>
         </div>
     }

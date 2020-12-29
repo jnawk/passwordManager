@@ -13,7 +13,7 @@ class PasswordManager extends React.Component {
 
         return (
             <Row>
-                <Col lg={6}>
+                <Col xs={12} lg={6}>
                     <Password
                         goBack={() => window.location.hash='/'}
                         savePassword={savePassword}/>

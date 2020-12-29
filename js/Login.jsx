@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Row, Col, Button} from 'react-bootstrap'
+import { Row, Col, Button} from 'react-bootstrap'
 
 const autoBind = require('auto-bind')
 
@@ -35,64 +35,52 @@ class Login extends React.Component {
         if(loginFailure) {
             failureMessage = (
                 <Row>
-                    <Col lg={12}>
-                        <Row>
-                            <Col lg={12}>
+                    <Col lg={6}>
                           Computer Says no
-                            </Col>
-                        </Row>
                     </Col>
                 </Row>
             )
         }
 
         return (
-            <Container className="show-grid">
+            <>
                 <Row>
                     <Col lg={6}>
-                        <Row>
-                            <Col lg={12}>
-                                <h2>Login Details</h2>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg={2}>
-                                <label>Username</label>
-                            </Col>
-                            <Col lg={5}>
-                                <input type="text"
-                                    onChange={event => this.receiveCredentials('username', event.target.value)}/>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg={2}>
-                                <label>Password</label>
-                            </Col>
-                            <Col lg={5}>
-                                <input type="password"
-                                    onChange={event =>this.receiveCredentials('password', event.target.value)}
-                                    onKeyPress={target => {
-                                        if(target.charCode == 13) {
-                                            this.loginButtonClick()
-                                        }
-                                    }}/>
-                            </Col>
-                        </Row>
+                        <h2>Login Details</h2>
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg={12}>
-                        <Row>
-                            <Col lg={12}>
-                                <Button onClick={this.loginButtonClick}>
-                                    Login
-                                </Button>
-                            </Col>
-                        </Row>
+                    <Col lg={2}>
+                        <label>Username</label>
+                    </Col>
+                    <Col lg={4}>
+                        <input type="text"
+                            onChange={event => this.receiveCredentials('username', event.target.value)}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col lg={2}>
+                        <label>Password</label>
+                    </Col>
+                    <Col lg={4}>
+                        <input type="password"
+                            onChange={event =>this.receiveCredentials('password', event.target.value)}
+                            onKeyPress={target => {
+                                if(target.charCode == 13) {
+                                    this.loginButtonClick()
+                                }
+                            }}/>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col lg={6}>
+                        <Button onClick={this.loginButtonClick}>
+                            Login
+                        </Button>
                     </Col>
                 </Row>
                 {failureMessage}
-            </Container>
+            </>
         )
     }
 }

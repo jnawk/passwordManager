@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Row, Col } from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
 
 import Password from './Password.jsx'
 
@@ -11,7 +11,7 @@ class PasswordManager extends React.Component {
     render() {
         const { savePassword } = this.props
 
-        return <Container className="show-grid">
+        return (
             <Row>
                 <Col lg={6}>
                     <Password
@@ -19,7 +19,7 @@ class PasswordManager extends React.Component {
                         savePassword={savePassword}/>
                 </Col>
             </Row>
-        </Container>
+        )
     }
 }
 

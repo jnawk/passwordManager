@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Row, Col, Button} from 'react-bootstrap'
+import { Row, Col, Button} from 'react-bootstrap'
 import PasswordListEntry from './PasswordListEntry.jsx'
 
 const autoBind = require('auto-bind')
@@ -44,12 +44,12 @@ class PasswordList extends React.Component {
             return null
         }
 
-        return <Container className="show-grid">
             <Row>
                 <Col lg={6}>
                     <Button onClick={() => window.location.hash='/newPassword'}>
                             New Password
                     </Button>
+        return <>
                 </Col>
             </Row>
             <Row>
@@ -73,7 +73,7 @@ class PasswordList extends React.Component {
                     </Button>
                 </Col>
             </Row>
-        </Container>
+        </>
     }
 }
 

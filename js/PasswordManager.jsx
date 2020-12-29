@@ -50,7 +50,7 @@ class PasswordManager extends React.Component {
             <Container fluid>
                 <Router>
                     <Switch>
-                        <Route exact path={["/login", "/login/:hash"]}>
+                        <Route exact path={['/login', '/login/:hash']}>
                             <LoginChild v2API={this.v2API} />
                         </Route>
                         <Route path="/showPassword/:passwordId"

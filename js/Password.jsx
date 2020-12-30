@@ -1,6 +1,8 @@
 import React from 'react'
 import { Row,Col,Button } from 'react-bootstrap'
 
+const autoBind = require('auto-bind')
+
 import './passwordComponents.css'
 
 class Password extends React.Component {
@@ -17,23 +19,27 @@ class Password extends React.Component {
         } else {
             this.state = { edit: true }
         }
+        autoBind(this)
+    }
 
-        this.edit_buttonClick = () => {
-            this.setState({edit: true})
-        }
+    edit_buttonClick() {
+        this.setState({ edit: true })
+    }
 
-        this.save_buttonClick = () => {
-            this.props.savePassword(this.state.passwordId, {
-                description: this.state.description,
-                username: this.state.username,
-                password: this.state.password
-            }).then(response => {
-                if(!this.state.passwordId) {
-                    this.setState({passwordId: response.passwordId})
-                }
-                this.setState({edit: false})
-            })
-        }
+    save_buttonClick() {
+        const { passwordId, description, username, password } = this.state
+
+        this.props.savePassword(passwordId, {
+            description: description,
+            username: username,
+            password: password
+        }).then(response => {
+            if(!passwordId) {
+                this.setState({ passwordId: response.passwordId })
+            }
+            this.setState({ edit: false })
+        })
+    }
 
     }
 

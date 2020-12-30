@@ -1,12 +1,12 @@
 import React from 'react'
-import {Row,Col,Button} from 'react-bootstrap'
+import { Row,Col,Button } from 'react-bootstrap'
 
 import './passwordComponents.css'
 
 class Password extends React.Component {
     constructor(props) {
         super(props)
-        var pw = this.props.password
+        let pw = this.props.password
         if(pw) {
             this.state = {
                 description: pw.description,
@@ -15,7 +15,7 @@ class Password extends React.Component {
                 passwordId: pw.passwordId
             }
         } else {
-            this.state = {edit: true}
+            this.state = { edit: true }
         }
 
         this.edit_buttonClick = () => {

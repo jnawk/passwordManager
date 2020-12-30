@@ -15,7 +15,7 @@ class PasswordList extends React.Component {
         } = this.props
         return (
             <Row key={password.passwordId} className="passwordListEntry">
-                <Col xs={9} d={10}>
+                <Col xs={9} md={10}>
                     <a href={`#/showPassword/${btoa(password.passwordId)}`}>
                         {password.description}
                     </a>

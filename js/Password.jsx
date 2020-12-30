@@ -44,63 +44,87 @@ class Password extends React.Component {
     }
 
     render() {
-        let { description, username, password } = this.state
-        let saveEdit
+        let { description, username, password, passwordId } = this.state
+        const { edit, showPasswordGenerator } = this.state
+        const newPassword = !passwordId
+        let saveButton = null
+        let editButton = null
+        const newPasswordLabel = `${(newPassword ? 'New' : 'Edit')} Password`
 
-        if(this.state.edit) {
-            description = <input
-                type="text"
-                id="description"
-                onChange={event => this.setState({description: event.target.value})}
-                value={description || ''}/>
+        if(edit) {
+            description = (
+                <input id="description"
+                    type="text"
+                    onChange={event => this.setState({ description: event.target.value })}
+                    value={description || ''}/>
+            )
+            username = (
+                <input id="username"
+                    type="text"
+                    onChange={event => this.setState({ username: event.target.value })}
+                    value={username || ''}/>
+            )
+            password = (
+                <input id="password"
+                    type="text"
+                    onChange={event => this.setState({ password: event.target.value })}
+                    value={password || ''}/>
+            )
 
-            username = <input
-                type="text"
-                id="username"
-                onChange={event => this.setState({username: event.target.value})}
-                value={username || ''}/>
-
-            password = <input
-                type="text"
-                id="password"
-                onChange={event => this.setState({password: event.target.value})}
-                value={password || ''}/>
-
-            saveEdit = <Button
-                id="save"
-                onClick={this.save_buttonClick}>
-                    Save
-            </Button>
-        } else {
-            saveEdit = <Button
-                id="edit"
-                onClick={this.edit_buttonClick}>
-                    Edit
-            </Button>
-        }
-
-        return <div className="passwordComponents">
-            <Row>
-                <Col xs={12} sm={3} lg={3}>Description</Col>
-                <Col xs={12} sm={9} lg={6}>{description}</Col>
-            </Row>
-            <Row>
-                <Col xs={12} sm={3} lg={3}>Username</Col>
-                <Col xs={12} sm={9} lg={6}>{username}</Col>
-            </Row>
-            <Row>
-                <Col xs={12} sm={3} lg={3}>Password</Col>
-                <Col xs={12} sm={9} lg={6}>{password}</Col>
-            </Row>
-            <Row>
-                <Col xs={4} sm={3} lg={3}>
-                    <Button onClick={() => window.location.hash='/'}>
-                      Go Back
+            saveButton = (
+                <Col xs={4} lg={6}>
+                    <Button id="save"
+                        onClick={this.save_buttonClick}>
+                      Save
                     </Button>
                 </Col>
-                <Col xs={4} lg={6}>{saveEdit}</Col>
-            </Row>
-        </div>
+            )
+        } else {
+            editButton = (
+                <Col xs={4} lg={6}>
+                    <Button
+                        id="edit"
+                        onClick={this.edit_buttonClick}>
+                        Edit
+                    </Button>
+                </Col>
+            )
+        }
+
+        return (
+            <>
+                <Row>
+                    <Col xs={12} lg={6}>
+                        <h3>
+                            {newPasswordLabel}
+                        </h3>
+                    </Col>
+                </Row>
+                <div className="passwordComponents">
+                    <Row>
+                        <Col xs={12} sm={3} lg={3}>Description</Col>
+                        <Col xs={12} sm={9} lg={6}>{description}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} sm={3} lg={3}>Username</Col>
+                        <Col xs={12} sm={9} lg={6}>{username}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs={12} sm={3} lg={3}>Password</Col>
+                        <Col xs={12} sm={9} lg={6}>{password}</Col>
+                    </Row>
+                    <Row>
+                        <Col xs={4} sm={3} lg={3}>
+                            <Button onClick={() => window.location.hash='/'}>
+                      Go Back
+                            </Button>
+                        </Col>
+                        {saveButton}
+                        {editButton}
+                    </Row>
+                </div>
+            </>
+        )
     }
 }
 

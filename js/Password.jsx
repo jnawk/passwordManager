@@ -5,6 +5,8 @@ const autoBind = require('auto-bind')
 
 import './passwordComponents.css'
 
+import PasswordGenerator from './PasswordGenerator.jsx'
+
 class Password extends React.Component {
     constructor(props) {
         super(props)
@@ -41,6 +43,9 @@ class Password extends React.Component {
         })
     }
 
+    passwordGenerator_buttonClick() {
+        const { showPasswordGenerator } = this.state
+        this.setState({ showPasswordGenerator: !showPasswordGenerator})
     }
 
     render() {
@@ -49,6 +54,10 @@ class Password extends React.Component {
         const newPassword = !passwordId
         let saveButton = null
         let editButton = null
+        let passwordGeneratorButton = null
+        let passwordGenerator = null
+
+        const passwordGeneratorButtonShowHide = showPasswordGenerator ? 'Close' : 'Open'
         const newPasswordLabel = `${(newPassword ? 'New' : 'Edit')} Password`
 
         if(edit) {
@@ -79,6 +88,21 @@ class Password extends React.Component {
                     </Button>
                 </Col>
             )
+
+            passwordGeneratorButton = (
+                <Row>
+                    <Col xs={7} lg={6}>
+                        <Button id="passwordGenerator"
+                            onClick={this.passwordGenerator_buttonClick}>
+                            {passwordGeneratorButtonShowHide} Password Generator
+                        </Button>
+                    </Col>
+                </Row>
+            )
+
+            if(showPasswordGenerator) {
+                passwordGenerator = <PasswordGenerator setPassword={password => this.setState({ password: password })}/>
+            }
         } else {
             editButton = (
                 <Col xs={4} lg={6}>
@@ -123,6 +147,8 @@ class Password extends React.Component {
                         {editButton}
                     </Row>
                 </div>
+                {passwordGeneratorButton}
+                {passwordGenerator}
             </>
         )
     }

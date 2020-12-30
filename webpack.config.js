@@ -28,6 +28,13 @@ var config = {
         use: "file-loader"
       },
       {
+        test: /\.txt$/,
+        loader: "raw-loader",
+        options: {
+          esModule: false
+        }
+      },
+      {
         test: /\.(woff|woff2)$/,
         use :"url-loader?prefix=font/&limit=5000"
       },

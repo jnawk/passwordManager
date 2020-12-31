@@ -11,7 +11,7 @@ var config = {
     path: BUILD_DIR,
     filename: 'passwordManager.js'
   },
-  mode: 'development',
+  mode: 'production',
   module: {
     rules: [
       {

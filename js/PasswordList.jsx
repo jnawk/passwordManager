@@ -53,15 +53,11 @@ class PasswordList extends React.Component {
                     <h2>Passwords</h2>
                 </Col>
             </Row>
-            <Row>
-                <Col lg={6}>
-                    {passwordList.map(password => (
-                        <PasswordListEntry key={password.passwordId}
-                            password={password}
-                            deletePasswordCallback={passwordId => this.deletePassword(passwordId)} />
-                    ))}
-                </Col>
-            </Row>
+            {passwordList.map(password => (
+                <PasswordListEntry key={password.passwordId}
+                    password={password}
+                    deletePasswordCallback={passwordId => this.deletePassword(passwordId)} />
+            ))}
             <Row className="newPasswordButton">
                 <Col lg={6}>
                     <Button onClick={() => window.location.hash='/newPassword'}>

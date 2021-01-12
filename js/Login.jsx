@@ -58,7 +58,7 @@ class Login extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg={2}>
+                    <Col lg={2} xl={1}>
                         <label>Username</label>
                     </Col>
                     <Col lg={4}>
@@ -67,7 +67,7 @@ class Login extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col lg={2}>
+                    <Col lg={2} xl={1}>
                         <label>Password</label>
                     </Col>
                     <Col lg={4}>

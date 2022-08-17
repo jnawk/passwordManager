@@ -299,10 +299,11 @@ export class WebsiteStack extends cdk.Stack {
                 handler: 'index.handler',
             }
         )
+        websiteBucket.grantReadWrite(updateFunction.grantPrincipal)
 
         const provider = new custom_resources.Provider(
             this,
-            "UpdateProvoider",
+            "UpdateProvider",
             {
                 onEventHandler: updateFunction
             }

@@ -223,7 +223,7 @@ export class WebsiteStack extends cdk.Stack {
                 new iam.PolicyStatement({
                     actions: ['dynamodb:Query'],
                     resources: [[
-                        usersTable.tableArn,
+                        passwordsTable.tableArn,
                         "index",
                         "userName-index"
                     ].join("/")]

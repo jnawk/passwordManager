@@ -311,7 +311,7 @@ export class WebsiteStack extends cdk.Stack {
 
         const updateEndpoint = new cdk.CustomResource(
             this,
-            "UpdateEndpoint",
+            "UpdateEndpoint" + new Date().getTime(),
             {
                 serviceToken: provider.serviceToken,
                 properties: {

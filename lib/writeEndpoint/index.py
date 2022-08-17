@@ -21,5 +21,7 @@ def handler(event: dict, context):
     s3.put_object(
         Bucket=bucket,
         Key=key,
-        Body=bytes(content, 'utf-8')
+        Body=bytes(content, 'utf-8'),
+        ACL='public-read',
+        ContentType='text/html',
     )

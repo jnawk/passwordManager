@@ -214,6 +214,22 @@ export class WebsiteStack extends cdk.Stack {
             loginFunction,
         ].forEach(lambdaFunction => {
             usersTable.grantReadData(lambdaFunction.grantPrincipal)
+        });
+
+        [
+            getPasswordsFunction,
+        ].forEach(lambdaFunction => {
+            lambdaFunction.addToRolePolicy(
+                new iam.PolicyStatement({
+                    actions: ['dynamodb:Query'],
+                    resources: [[
+                        usersTable.tableArn,
+                        "index",
+                        "userName-index"
+                    ].join("/")]
+                })
+            )
+            usersTable.grantReadData(lambdaFunction.grantPrincipal)
         })
 
         usersTable.grantReadWriteData(signupFunction.grantPrincipal);

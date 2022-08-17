@@ -6,7 +6,7 @@ def handler(event: dict, context):
     if event['RequestType'] == 'Delete':
         return
 
-    properties: dict = event['RequestProperties']
+    properties: dict = event['ResourceProperties']
     search = properties['search']
     replace = properties['replace']
     bucket = properties['bucket']

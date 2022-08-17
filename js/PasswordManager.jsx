@@ -41,17 +41,6 @@ class PasswordManager extends React.Component {
         }
     }
 
-    ////////////////////
-    // EVENT HANDLERS //
-    ////////////////////
-
-    // handles the change event on the username and password input fields
-    receiveCredentials(param, value) {
-        var credentials = this.state.credentials || {}
-        credentials[param] = value
-        this.setState({credentials: credentials})
-    }
-
     render() {
         return (
             <Container fluid>
@@ -60,12 +49,9 @@ class PasswordManager extends React.Component {
                         <Route exact path={['/login', '/login/:hash']}>
                             <LoginChild v2API={this.v2API} />
                         </Route>
-                        <Route path="/showPassword/:passwordId"
-                            children={
-                                <ShowPasswordChild savePassword={this.savePassword}
-                                    v2API={this.v2API}
-                                />
-                            }>
+                        <Route path="/showPassword/:passwordId">
+                            <ShowPasswordChild savePassword={this.savePassword}
+                                v2API={this.v2API} />
                         </Route>
                         <Route exact path="/newPassword">
                             <NewPassword savePassword={this.savePassword} />

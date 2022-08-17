@@ -4,6 +4,7 @@ import {
     aws_apigateway as apigateway,
     aws_cloudfront as cloudfront,
     aws_dynamodb as dynamodb,
+    aws_iam as iam,
     aws_lambda,
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
@@ -299,7 +300,18 @@ export class WebsiteStack extends cdk.Stack {
                 handler: 'index.handler',
             }
         )
-        websiteBucket.grantReadWrite(updateFunction.grantPrincipal)
+
+        updateFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: [
+                    's3:GetObjet',
+                    's3:PutObject',
+                    's3:PutObjectAcl'
+                ],
+                resources: [websiteBucket.arnForObjects("index.html")],
+                effect: iam.Effect.ALLOW,
+            })
+        )
 
         const provider = new custom_resources.Provider(
             this,

@@ -128,7 +128,7 @@ export class WebsiteStack extends cdk.Stack {
           ].join(":")]
         })
       }
-    ).getResponseField("Value")
+    ).getResponseField("Parameter.Value")
 
     const lambdaEnvironment = {
       "acceptingNewMembers": ssm.StringParameter.fromStringParameterName(

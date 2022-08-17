@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
 import * as constructs from 'constructs';
-import {   
+import {
   aws_apigateway as apigateway,
   aws_cloudfront as cloudfront,
   aws_dynamodb as dynamodb,
@@ -23,10 +23,10 @@ const config = {
 
 export class PipelineStack extends cdk.Stack {
   constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);  
+    super(scope, id, props);
       const pipeline = new pipelines.CodePipeline(
-        this, 
-        "Pipeline", 
+        this,
+        "Pipeline",
         {
           publishAssetsInParallel: false,
           synth: new pipelines.ShellStep("Synth", { input: pipelines.CodePipelineSource.connection(config.source_repository_path, config.source_repository_branch, {
@@ -53,7 +53,7 @@ export class DeploymentStage extends cdk.Stage {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
         region: 'ap-southeast-2'
-      }, 
+      },
       stackName: "passwordManagerV2",
       description: "Stack for JNaWK Password Manager"
     })
@@ -70,13 +70,13 @@ export class WebsiteStack extends cdk.Stack {
       "WebsiteBucket",
       config.websiteBucket
     )
-    
+
     const distribution = cloudfront.Distribution.fromDistributionAttributes(
       this,
       "Distribution",
       {
        distributionId: config.distributionId,
-       domainName: config.domainName 
+       domainName: config.domainName
       }
     )
 
@@ -86,12 +86,12 @@ export class WebsiteStack extends cdk.Stack {
     )
 
     new s3deploy.BucketDeployment(
-      this, 
-      "DeployWebsite", 
+      this,
+      "DeployWebsite",
       {
         sources: [ websiteSource ],
         destinationBucket: websiteBucket,
-        distribution, 
+        distribution,
         distributionPaths: ["/*"],
       }
     )
@@ -211,23 +211,23 @@ export class WebsiteStack extends cdk.Stack {
     )
 
     const usersTable = dynamodb.Table.fromTableName(
-      this, 
-      "UsersTable", 
+      this,
+      "UsersTable",
       "passwordManager-users"
     )
 
     const passwordsTable = dynamodb.Table.fromTableName(
       this,
-      "PasswordsTable", 
+      "PasswordsTable",
       "passwordManager-passwords"
     );
 
     [
-      getPasswordDetailsFunction, 
+      getPasswordDetailsFunction,
       deletePasswordFunction,
       getPasswordsFunction,
       putPasswordFunction,
-      loginFunction,   
+      loginFunction,
     ].forEach(lambdaFunction => {
       usersTable.grantReadData(lambdaFunction.grantPrincipal)
     })
@@ -252,7 +252,7 @@ export class WebsiteStack extends cdk.Stack {
       this,
       "ApiGateway",
       {
-        restApiName: "Password Manager API V2", 
+        restApiName: "Password Manager API V2",
         deploy: true,
         deployOptions: { stageName: 'p' }
       }

@@ -237,12 +237,8 @@ export class WebsiteStack extends cdk.Stack {
             "ApiGateway",
             {
                 restApiName: "Password Manager API V2",
-                // deploy: true,
-                // deployOptions: { stageName: 'p' }
             }
         )
-        // const cfnApiGateway = apiGateway.node.defaultChild as apigateway.CfnRestApi
-        // cfnApiGateway.overrideLogicalId("ApiGateway")
 
         function addResource(resourceName: string, method: string, handler: aws_lambda.IFunction) {
             const resource = apiGateway.root.addResource(resourceName)

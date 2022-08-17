@@ -346,7 +346,8 @@ export class WebsiteStack extends cdk.Stack {
                     bucket: config.websiteBucket,
                     key: "index.html",
                     search: "__ENDPOINT__",
-                    replace: apiGateway.deploymentStage.urlForPath('/')
+                    replace: apiGateway.deploymentStage.urlForPath('/'),
+                    distribution: config.distributionId,
                 }
             }
         )

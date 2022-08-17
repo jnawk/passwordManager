@@ -4,7 +4,6 @@ import {
   aws_apigateway as apigateway,
   aws_cloudfront as cloudfront,
   aws_dynamodb as dynamodb,
-  aws_iam as iam,
   aws_lambda,
   aws_s3 as s3,
   aws_s3_deployment as s3deploy,
@@ -96,17 +95,6 @@ export class WebsiteStack extends cdk.Stack {
       }
     )
 
-    // const lambdaRole = new iam.Role(
-    //   this,
-    //   "LambdaDynamoRole",
-    //   {
-    //     assumedBy: new iam.ServicePrincipal("lambda.amazonaws.com"),
-    //     managedPolicies: [
-    //       iam.ManagedPolicy.fromAwsManagedPolicyName("AWSLambdaBasicExecutionRole")
-    //     ],
-    //   }
-    // )
-
     const lambdaAsset = aws_lambda.Code.fromAsset(
       "./lambda",
       { exclude: [ '*.zip', ".gitignore", ".eslintrc.json" ] }
@@ -129,7 +117,6 @@ export class WebsiteStack extends cdk.Stack {
       code: lambdaAsset,
       memorySize: 128,
       environment: lambdaEnvironment,
-      // role: lambdaRole,
       runtime: aws_lambda.Runtime.NODEJS_16_X,
     }
 

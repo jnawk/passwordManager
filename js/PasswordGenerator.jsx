@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Row, Col, Button } from 'react-bootstrap'
 
 const autoBind = require('auto-bind')
@@ -32,6 +33,12 @@ class PasswordGenerator extends React.Component {
             numeralCount: 1
         }
         autoBind(this)
+    }
+
+    static get propTypes() {
+        return {
+            setPassword: PropTypes.func
+        }
     }
 
     onChangeHandler(event) {

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Row, Col, Button} from 'react-bootstrap'
 import PasswordListEntry from './PasswordListEntry.jsx'
 
@@ -12,6 +13,15 @@ class PasswordList extends React.Component {
         super(props)
         this.state = {}
         autoBind(this)
+    }
+
+    static get propTypes() {
+        return {
+            v2API: PropTypes.shape({
+                getPasswordList: PropTypes.function,
+                deletePassword: PropTypes.function
+            })
+        }
     }
 
     componentDidMount() {

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Row,Col,Button } from 'react-bootstrap'
 
 const autoBind = require('auto-bind')
@@ -22,6 +23,18 @@ class Password extends React.Component {
             this.state = { edit: true }
         }
         autoBind(this)
+    }
+
+    static get propTypes() {
+        return {
+            password: PropTypes.shape({
+                description: PropTypes.string,
+                username: PropTypes.string,
+                password: PropTypes.string,
+                passwordId: PropTypes.string
+            }),
+            savePassword: PropTypes.func
+        }
     }
 
     edit_buttonClick() {

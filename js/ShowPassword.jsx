@@ -1,5 +1,6 @@
 import React from 'react'
 import { Row, Col} from 'react-bootstrap'
+import PropTypes from 'prop-types'
 
 import Password from './Password.jsx'
 
@@ -10,6 +11,16 @@ class ShowPassword extends React.Component {
         super(props)
         this.state = {}
         autoBind(this)
+    }
+
+    static get propTypes() {
+        return {
+            v2API: PropTypes.shape({
+                fetchPassword: PropTypes.func
+            }),
+            savePassword: PropTypes.func,
+            password: PropTypes.string
+        }
     }
 
     componentDidMount() {

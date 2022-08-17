@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { Container } from 'react-bootstrap'
 import {
@@ -24,6 +25,12 @@ class PasswordManager extends React.Component {
         this.v2API = new V2API(this.props.endpoint)
         this.state = {}
         autoBind(this)
+    }
+
+    static get propTypes() {
+        return {
+            endpoint: PropTypes.string
+        }
     }
 
     savePassword(passwordId, data) {
@@ -80,6 +87,9 @@ const LoginChild = (props) => {
         <Login v2API={v2API} hash={hash} />
     )
 }
+LoginChild.propTypes = {
+    v2API: PropTypes.object
+}
 
 const ShowPasswordChild = (props) => {
     const { savePassword, v2API } = props
@@ -90,6 +100,10 @@ const ShowPasswordChild = (props) => {
             savePassword={savePassword}
             v2API={v2API}/>
     )
+}
+ShowPasswordChild.propTypes = {
+    v2API: PropTypes.object,
+    savePassword: PropTypes.functio
 }
 
 export default PasswordManager

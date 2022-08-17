@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Row, Col, Button} from 'react-bootstrap'
 
 import './passwordListEntry.css'
@@ -6,6 +7,16 @@ import './passwordListEntry.css'
 class PasswordList extends React.Component {
     constructor(props) {
         super(props)
+    }
+
+    static get propTypes() {
+        return {
+            deletePasswordCallback: PropTypes.function,
+            password: PropTypes.shape({
+                passwordId: PropTypes.string,
+                description: PropTypes.string
+            })
+        }
     }
 
     render() {

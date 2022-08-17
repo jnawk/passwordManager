@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Row, Col, Button} from 'react-bootstrap'
 
 const autoBind = require('auto-bind')
@@ -8,6 +9,13 @@ class Login extends React.Component {
         super(props)
         this.state = {}
         autoBind(this)
+    }
+
+    static get propTypes() {
+        return {
+            v2API: PropTypes.object,
+            hash: PropTypes.string
+        }
     }
 
     loginButtonClick() {

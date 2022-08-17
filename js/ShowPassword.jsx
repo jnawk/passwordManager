@@ -1,6 +1,6 @@
 import React from 'react'
-import { Row, Col} from 'react-bootstrap'
 import PropTypes from 'prop-types'
+import { Row, Col } from 'react-bootstrap'
 
 import Password from './Password.jsx'
 

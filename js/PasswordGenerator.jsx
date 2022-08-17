@@ -194,7 +194,11 @@ class PasswordGenerator extends React.Component {
         let passwordGenerateFailureMessage = null
         if(passwordGenerateFailure) {
             passwordGenerateFailureMessage = (
-                <Row><Col>Could not generate a password - did you set impossible criteria?</Col></Row>
+                <Row>
+                    <Col>
+                      Could not generate a password - did you set impossible criteria?
+                    </Col>
+                </Row>
             )
         }
         return (
@@ -248,16 +252,16 @@ class PasswordGenerator extends React.Component {
                 </Row>
                 {criteriaDetermination}
                 <Row>
-                  <Col>
-                      <Button onClick={this.generate}>
+                    <Col>
+                        <Button onClick={this.generate}>
                         Generate
-                      </Button>
-                  </Col>
-                  <Col>
-                      <Button onClick={() => setPassword(generatedPassword)}>
+                        </Button>
+                    </Col>
+                    <Col>
+                        <Button onClick={() => setPassword(generatedPassword)}>
                         Set as password
-                      </Button>
-                  </Col>
+                        </Button>
+                    </Col>
                 </Row>
                 {passwordGenerateFailureMessage}
             </div>

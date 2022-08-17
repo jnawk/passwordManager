@@ -13,6 +13,9 @@ const corsHeaders = {
     'Access-Control-Allow-Origin': '*'
 }
 
+const passwordsTable = 'passwordManager-passwords'
+const usersTable = 'passwordManager-users'
+
 exports.getPasswordDetails = (event, context) => {
     event = JSON.parse(event.body)
     validateToken(event, (err, data) => {
@@ -28,7 +31,7 @@ exports.getPasswordDetails = (event, context) => {
                     'passwordId': { S: event.passwordId },
                     'userName': { S: user.userName.S }
                 },
-                TableName: 'passwordManager-passwords'
+                TableName: passwordsTable
             }, (err, data) => {
                 if(err) {
                     context.fail(err)
@@ -64,7 +67,7 @@ exports.deletePassword = (event, context) => {
                     'passwordId': { S: event.passwordId },
                     'userName': { S: user.userName.S }
                 },
-                TableName: 'passwordManager-passwords'
+                TableName: passwordsTable
             }, (err/*, data*/) => {
                 if(err) {
                     context.fail(err)
@@ -93,7 +96,7 @@ exports.getPasswords = (event, context) => {
             dynamodb.query({
                 KeyConditionExpression: 'userName = :str',
                 ExpressionAttributeValues: { ':str': { S: data.user.userName.S } },
-                TableName: 'passwordManager-passwords',
+                TableName: passwordsTable,
                 IndexName: 'userName-index'
             }, (err, data) => {
                 if(err) {
@@ -143,7 +146,7 @@ exports.putPassword = (event, context) => {
             }
             const decryptedUserKey = decrypt(data.user.sysEncryptedKey.S, systemKey)
             dynamodb.updateItem({
-                TableName: 'passwordManager-passwords',
+                TableName: passwordsTable,
                 Key: {
                     passwordId : { S: passwordId },
                     userName: { S: data.user.userName.S }
@@ -191,7 +194,7 @@ exports.signup = (event, context) => {
     } else {
         dynamodb.getItem({
             Key: { userName: { S: username } },
-            TableName: 'passwordManager-users'
+            TableName: usersTable
         }, (err, data) => {
             if(err) {
                 context.fail(err)
@@ -217,7 +220,7 @@ exports.signup = (event, context) => {
                             sysEncryptedKey: { S: sysEncryptedKey }
                         }
                         dynamodb.putItem({
-                            TableName: 'passwordManager-users',
+                            TableName: usersTable,
                             Item: user
                         }, (err/*, data*/) => {
                             if(err) {
@@ -256,7 +259,7 @@ exports.login = (event, context) => {
 
     dynamodb.getItem({
         Key: { userName: { S: username } },
-        TableName: 'passwordManager-users'
+        TableName: usersTable
     }, (err, data) => {
         if(err) {
             context.fail(err)
@@ -319,7 +322,7 @@ const validateToken = (event, callback) => {
             const username = decryptedToken.user
             dynamodb.getItem({
                 Key: { userName: { S: username } },
-                TableName: 'passwordManager-users'
+                TableName: usersTable
             }, function(err, data) {
                 if(err) {
                     callback(err)

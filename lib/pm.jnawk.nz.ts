@@ -67,38 +67,6 @@ export class WebsiteStack extends cdk.Stack {
     constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
-    const websiteBucket = s3.Bucket.fromBucketName(
-      this,
-      "WebsiteBucket",
-      config.websiteBucket
-    )
-
-    const distribution = cloudfront.Distribution.fromDistributionAttributes(
-      this,
-      "Distribution",
-      {
-       distributionId: config.distributionId,
-       domainName: config.domainName
-      }
-    )
-
-    const websiteSource = s3deploy.Source.asset(
-      "./website/s3",
-      { exclude: [ '.gitignore' ] }
-    )
-
-    new s3deploy.BucketDeployment(
-      this,
-      "DeployWebsite",
-      {
-        sources: [ websiteSource ],
-        destinationBucket: websiteBucket,
-        distribution,
-        distributionPaths: ["/*"],
-      }
-    )
-
-
         const lambdaAsset = aws_lambda.Code.fromAsset(
             "./lambda",
             { exclude: ['*.zip', ".gitignore", ".eslintrc.json"] }
@@ -263,29 +231,18 @@ export class WebsiteStack extends cdk.Stack {
             passwordsTable.grantWriteData(lambdaFunction.grantPrincipal)
         });
 
-    const apiGateway = new apigateway.RestApi(
-      this,
-      "ApiGateway",
-      {
-        restApiName: "Password Manager API V2",
-        deploy: true,
-        deployOptions: { stageName: 'p' }
-      }
-    )
-    const cfnApiGateway = apiGateway.node.defaultChild as apigateway.CfnRestApi
-    cfnApiGateway.overrideLogicalId("ApiGateway")
+        const apiGateway = new apigateway.RestApi(
+            this,
+            "ApiGateway",
+            {
+                restApiName: "Password Manager API V2",
+                // deploy: true,
+                // deployOptions: { stageName: 'p' }
+            }
+        )
+        // const cfnApiGateway = apiGateway.node.defaultChild as apigateway.CfnRestApi
+        // cfnApiGateway.overrideLogicalId("ApiGateway")
 
-
-    // addResource("accepting-new-members", "GET", acceptingNewMembersFunction)
-    // addResource("delete-password", "POST", deletePasswordFunction)
-    // addResource("get-password-details", "POST", getPasswordDetailsFunction)
-    // addResource("getPasswords", "POST", getPasswordsFunction)
-    // addResource("login", "POST", loginFunction)
-    // addResource("putPassword", "PUT", putPasswordFunction)
-    // addResource("signup", "POST", signupFunction)
-
-    addResource("foo", "GET", acceptingNewMembersFunction)
-  }
         function addResource(resourceName: string, method: string, handler: aws_lambda.IFunction) {
             const resource = apiGateway.root.addResource(resourceName)
             resource.addMethod(method, new apigateway.LambdaIntegration(handler))
@@ -293,4 +250,77 @@ export class WebsiteStack extends cdk.Stack {
                 allowOrigins: ['*'],
             })
         }
+
+        addResource("accepting-new-members", "GET", acceptingNewMembersFunction)
+        addResource("delete-password", "POST", deletePasswordFunction)
+        addResource("get-password-details", "POST", getPasswordDetailsFunction)
+        addResource("getPasswords", "POST", getPasswordsFunction)
+        addResource("login", "POST", loginFunction)
+        addResource("putPassword", "PUT", putPasswordFunction)
+        addResource("signup", "POST", signupFunction)
+
+        const websiteBucket = s3.Bucket.fromBucketName(
+            this,
+            "WebsiteBucket",
+            config.websiteBucket
+        )
+
+        const distribution = cloudfront.Distribution.fromDistributionAttributes(
+            this,
+            "Distribution",
+            {
+                distributionId: config.distributionId,
+                domainName: config.domainName
+            }
+        )
+
+        const websiteSource = s3deploy.Source.asset(
+            "./website/s3",
+            { exclude: ['.gitignore'] }
+        )
+
+        const deployment = new s3deploy.BucketDeployment(
+            this,
+            "DeployWebsite",
+            {
+                sources: [websiteSource],
+                destinationBucket: websiteBucket,
+                distribution,
+                distributionPaths: ["/*"],
+            }
+        )
+
+        const updateFunction = new aws_lambda.Function(
+            this,
+            "UpdateFunction",
+            {
+                code: aws_lambda.Code.fromAsset('./lib/writeEndpoint'),
+                runtime: aws_lambda.Runtime.PYTHON_3_9,
+                handler: 'index.handler',
+            }
+        )
+
+        const provider = new custom_resources.Provider(
+            this,
+            "UpdateProvoider",
+            {
+                onEventHandler: updateFunction
+            }
+        )
+
+        const updateEndpoint = new cdk.CustomResource(
+            this,
+            "UpdateEndpoint",
+            {
+                serviceToken: provider.serviceToken,
+                properties: {
+                    bucket: config.websiteBucket,
+                    key: "index.html",
+                    search: "__ENDPOINT__",
+                    replace: apiGateway.deploymentStage.urlForPath('/')
+                }
+            }
+        )
+        updateEndpoint.node.addDependency(deployment)
+    }
 }

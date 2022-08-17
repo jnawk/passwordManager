@@ -281,13 +281,14 @@ export class WebsiteStack extends cdk.Stack {
       })
     }
 
-    addResource("accepting-new-members", "GET", acceptingNewMembersFunction)
-    addResource("delete-password", "POST", deletePasswordFunction)
-    addResource("get-password-details", "POST", getPasswordDetailsFunction)
-    addResource("getPasswords", "POST", getPasswordsFunction)
-    addResource("login", "POST", loginFunction)
-    addResource("putPassword", "PUT", putPasswordFunction)
-    addResource("signup", "POST", signupFunction)
+    // addResource("accepting-new-members", "GET", acceptingNewMembersFunction)
+    // addResource("delete-password", "POST", deletePasswordFunction)
+    // addResource("get-password-details", "POST", getPasswordDetailsFunction)
+    // addResource("getPasswords", "POST", getPasswordsFunction)
+    // addResource("login", "POST", loginFunction)
+    // addResource("putPassword", "PUT", putPasswordFunction)
+    // addResource("signup", "POST", signupFunction)
 
+    addResource("foo", "GET", acceptingNewMembersFunction)
   }
 }

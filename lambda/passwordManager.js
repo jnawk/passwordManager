@@ -99,7 +99,7 @@ exports.getPasswords = (event, context) => {
                 if(err) {
                     context.fail(err)
                 } else {
-                    var passwords = Array()
+                    let passwords = Array()
                     data.Items.forEach((password) => {
                         passwords.push({
                             passwordId: password.passwordId.S,
@@ -129,7 +129,7 @@ exports.putPassword = (event, context) => {
             context.fail(err)
         } else {
             const newToken = data.token
-            var passwordId
+            let passwordId
             if('undefined' == typeof event.passwordId) {
                 // new password
                 const passwordHash = crypto.createHash('sha1').update(event.description).digest('base64')
@@ -272,10 +272,10 @@ exports.login = (event, context) => {
                 try {
                     console.log(data.Item)
                     // decrypt user's encrypted key with user's password
-                    var decryptedUserKey = decrypt(data.Item.encryptedKey.S, password)
+                    const decryptedUserKey = decrypt(data.Item.encryptedKey.S, password)
 
                     // decrypt encrypted username with user's key
-                    var decryptedUsername = decrypt(data.Item.encryptedUsername.S, decryptedUserKey)
+                    const decryptedUsername = decrypt(data.Item.encryptedUsername.S, decryptedUserKey)
 
                     if(username != decryptedUsername) {
                         // user's password fails to decrypt user's key,
@@ -288,7 +288,7 @@ exports.login = (event, context) => {
                     } else {
                         // user's password descrypts user's key which subsequently decrypts encyrpted username
                         // password must be right.
-                        var token = encrypt(JSON.stringify({
+                        const token = encrypt(JSON.stringify({
                             timestamp: new Date().getTime(),
                             user: username
                         }), systemKey)
@@ -309,14 +309,14 @@ exports.login = (event, context) => {
 }
 
 const validateToken = (event, callback) => {
-    var decryptedToken = JSON.parse(decrypt(event.token, systemKey))
-    var oldestAcceptableToken = new Date().getTime() - (1000 * 60 * 15)
+    const decryptedToken = JSON.parse(decrypt(event.token, systemKey))
+    const oldestAcceptableToken = new Date().getTime() - (1000 * 60 * 15)
     if(decryptedToken.timestamp < oldestAcceptableToken) {
         callback(new Error('session expired'))
     } else {
         try {
             console.log(decryptedToken)
-            var username = decryptedToken.user
+            const username = decryptedToken.user
             dynamodb.getItem({
                 Key: { userName: { S: username } },
                 TableName: 'passwordManager-users'
@@ -324,7 +324,7 @@ const validateToken = (event, callback) => {
                 if(err) {
                     callback(err)
                 } else {
-                    var newToken = encrypt(JSON.stringify({
+                    const newToken = encrypt(JSON.stringify({
                         timestamp: new Date().getTime(),
                         user: username
                     }), systemKey)
@@ -343,15 +343,15 @@ const validateToken = (event, callback) => {
 }
 
 const encrypt = (data, password) => {
-    const cipher = crypto.createCipher('aes192', new Buffer(password, 'binary'))
-    var buf = cipher.update(data, 'utf-8', 'base64')
+    const cipher = crypto.createCipher('aes192', Buffer.from(password, 'binary'))
+    let buf = cipher.update(data, 'utf-8', 'base64')
     buf += cipher.final('base64')
     return buf
 }
 
 const decrypt = (data, password) => {
-    const cipher = crypto.createDecipher('aes192', new Buffer(password, 'binary'))
-    var buf = cipher.update(data, 'base64', 'utf-8')
+    const cipher = crypto.createDecipher('aes192', Buffer.from(password, 'binary'))
+    let buf = cipher.update(data, 'base64', 'utf-8')
     buf += cipher.final('utf-8')
     return buf
 }

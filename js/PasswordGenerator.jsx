@@ -1,3 +1,12 @@
+/* eslint-disable security/detect-object-injection */
+/*
+  the above rule is triggered because there is a dropdown with provided values
+  which match keys in criteria - which is static data and is never assigned to,
+  and is used to set defaults for password length.  If some malicious user
+  alters the DOM to alter the legitimate values of password tyee and the ID of
+  the select component then they could use that to set arbitrary state, which is
+  never executed, so not sure what the rule is defending against here.
+ */
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Row, Col, Button } from 'react-bootstrap'

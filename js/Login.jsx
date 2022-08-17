@@ -41,7 +41,7 @@ class Login extends React.Component {
     // handles the change event on the username and password input fields
     receiveCredentials(param, value) {
         var credentials = this.state.credentials || {}
-        credentials[param] = value
+        credentials[param] = value // eslint-disable-line security/detect-object-injection
         this.setState({credentials: credentials})
     }
 

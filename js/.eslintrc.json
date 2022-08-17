@@ -4,7 +4,11 @@
         "es6": true,
         "commonjs": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+      "eslint:recommended",
+      "plugin:security/recommended",
+      "plugin:react/recommended"
+    ],
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
@@ -13,8 +17,14 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "security"
     ],
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
     "rules": {
         "indent": [
             "error",

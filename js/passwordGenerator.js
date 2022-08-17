@@ -42,7 +42,7 @@ export const generatePassword = ({
             numerals: 0
         }
         for(let i = 0; i < length; ++i) {
-            let nextChar = ourCharacters[values[i] % ourCharacters.length]
+            let nextChar = ourCharacters[values[i] % ourCharacters.length] // eslint-disable-line security/detect-object-injection
             if(wankCharacters.includes(nextChar)) {
                 statistics.wankCharacters = statistics.wankCharacters + 1
             } else if(upperCharacters.includes(nextChar)) {

@@ -8,6 +8,7 @@ import {
   aws_s3 as s3,
   aws_s3_deployment as s3deploy,
   aws_ssm as ssm,
+  custom_resources,
   pipelines,
 } from 'aws-cdk-lib';
 
@@ -17,7 +18,8 @@ const config = {
   distributionId: "E3UXG2M8UG0ACM",
   websiteBucket: 'jnawk-pm',
   source_repository_path: "jnawk/passwordManager",
-  source_repository_branch: 'cdk'
+  source_repository_branch: 'cdk',
+  systemKeyParameterName: "/passwordManager/systemKey",
 }
 
 export class PipelineStack extends cdk.Stack {
@@ -100,17 +102,41 @@ export class WebsiteStack extends cdk.Stack {
       { exclude: [ '*.zip', ".gitignore", ".eslintrc.json" ] }
     )
 
+    const getSystemKey: custom_resources.AwsSdkCall = {
+      action: 'getParameter',
+      service: 'SSM',
+      parameters: {
+        Name:  config.systemKeyParameterName,
+        WithDecryption: true
+      },
+      physicalResourceId: custom_resources.PhysicalResourceId.of(config.systemKeyParameterName),
+    }
+    const systemKey = new custom_resources.AwsCustomResource(
+      this,
+      "ReadParameter" + new Date().getTime(),
+      {
+        onCreate: getSystemKey,
+        onUpdate: getSystemKey,
+        policy: custom_resources.AwsCustomResourcePolicy.fromSdkCalls({
+          resources: [[
+            "arn",
+            cdk.Aws.PARTITION,
+            "ssm",
+            cdk.Aws.REGION,
+            cdk.Aws.ACCOUNT_ID,
+            ["parameter", config.systemKeyParameterName].join("")
+          ].join(":")]
+        })
+      }
+    ).getResponseField("Value")
+
     const lambdaEnvironment = {
       "acceptingNewMembers": ssm.StringParameter.fromStringParameterName(
         this,
         "acceptingNewMembersParameter",
         "/passwordManager/acceptingNewMembers"
       ).stringValue,
-      "systemKey": ssm.StringParameter.fromSecureStringParameterAttributes(
-        this,
-        "systemKeyParameter",
-        { parameterName: "/passwordManager/systemKey"}
-      ).stringValue,
+      systemKey,
     }
 
     const commonFunctionOptions = {

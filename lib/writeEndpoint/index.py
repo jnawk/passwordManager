@@ -33,8 +33,8 @@ def handler(event: dict, context):
         InvalidationBatch=dict(
             Paths=dict(
                 Quantity=1,
-                Items=f'/{key}',
+                Items=[f'/{key}'],
             ),
-            CallerReference=time.time(),
+            CallerReference=str(time.time()),
         )
     )

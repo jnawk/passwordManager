@@ -313,6 +313,22 @@ export class WebsiteStack extends cdk.Stack {
             })
         )
 
+        updateFunction.addToRolePolicy(
+            new iam.PolicyStatement({
+                actions: ['cloudfront:CreateInvalidation'],
+                resources: [[
+                    "arn",
+                    cdk.Aws.PARTITION,
+                    'cloudfront',
+                    "",
+                    cdk.Aws.ACCOUNT_ID,
+                    ["distribution", config.distributionId].join("/"),
+                ].join(":")],
+                effect: iam.Effect.ALLOW,
+            })
+        )
+
+
         const provider = new custom_resources.Provider(
             this,
             "UpdateProvider",

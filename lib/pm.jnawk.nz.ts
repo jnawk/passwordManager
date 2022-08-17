@@ -1,70 +1,71 @@
 import * as cdk from 'aws-cdk-lib';
 import * as constructs from 'constructs';
 import {
-  aws_apigateway as apigateway,
-  aws_cloudfront as cloudfront,
-  aws_dynamodb as dynamodb,
-  aws_lambda,
-  aws_s3 as s3,
-  aws_s3_deployment as s3deploy,
-  aws_ssm as ssm,
-  custom_resources,
-  pipelines,
+    aws_apigateway as apigateway,
+    aws_cloudfront as cloudfront,
+    aws_dynamodb as dynamodb,
+    aws_lambda,
+    aws_s3 as s3,
+    aws_s3_deployment as s3deploy,
+    aws_ssm as ssm,
+    custom_resources,
+    pipelines,
 } from 'aws-cdk-lib';
 
 const config = {
-  domainName: 'pm.jnawk.nz',
-  connection_arn_parameter_name: "/github_jnawk/arn",
-  distributionId: "E3UXG2M8UG0ACM",
-  websiteBucket: 'jnawk-pm',
-  source_repository_path: "jnawk/passwordManager",
-  source_repository_branch: 'cdk',
-  systemKeyParameterName: "/passwordManager/systemKey",
+    domainName: 'pm.jnawk.nz',
+    connection_arn_parameter_name: "/github_jnawk/arn",
+    distributionId: "E3UXG2M8UG0ACM",
+    websiteBucket: 'jnawk-pm',
+    source_repository_path: "jnawk/passwordManager",
+    source_repository_branch: 'cdk',
+    systemKeyParameterName: "/passwordManager/systemKey",
 }
 
 export class PipelineStack extends cdk.Stack {
-  constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
-      const pipeline = new pipelines.CodePipeline(
-        this,
-        "Pipeline",
-        {
-          publishAssetsInParallel: false,
-          synth: new pipelines.ShellStep("Synth", { input: pipelines.CodePipelineSource.connection(config.source_repository_path, config.source_repository_branch, {
-            connectionArn: ssm.StringParameter.fromStringParameterName(this, "ConnectionArnParameter", config.connection_arn_parameter_name).stringValue
-          }),
-          commands: [
-            'npm ci',
-            '(cd website; npm ci)',
-            'npm run build',
-            "npx cdk synth"
-          ]
-        }),
-        selfMutation: true
-      })
+    constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {
+        super(scope, id, props);
+        const pipeline = new pipelines.CodePipeline(
+            this,
+            "Pipeline",
+            {
+                publishAssetsInParallel: false,
+                synth: new pipelines.ShellStep("Synth", {
+                    input: pipelines.CodePipelineSource.connection(config.source_repository_path, config.source_repository_branch, {
+                        connectionArn: ssm.StringParameter.fromStringParameterName(this, "ConnectionArnParameter", config.connection_arn_parameter_name).stringValue
+                    }),
+                    commands: [
+                        'npm ci',
+                        '(cd website; npm ci)',
+                        'npm run build',
+                        "npx cdk synth"
+                    ]
+                }),
+                selfMutation: true
+            })
 
-      pipeline.addStage(new DeploymentStage(this, "Deployment"))
-  }
+        pipeline.addStage(new DeploymentStage(this, "Deployment"))
+    }
 }
 
 export class DeploymentStage extends cdk.Stage {
-  constructor(scope: constructs.Construct, id: string, props?: cdk.StageProps) {
-    super(scope, id, props);
-    new WebsiteStack(this, "WebsiteStack", {
-      env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: 'ap-southeast-2'
-      },
-      stackName: "passwordManagerV2",
-      description: "Stack for JNaWK Password Manager"
-    })
-  }
+    constructor(scope: constructs.Construct, id: string, props?: cdk.StageProps) {
+        super(scope, id, props);
+        new WebsiteStack(this, "WebsiteStack", {
+            env: {
+                account: process.env.CDK_DEFAULT_ACCOUNT,
+                region: 'ap-southeast-2'
+            },
+            stackName: "passwordManagerV2",
+            description: "Stack for JNaWK Password Manager"
+        })
+    }
 }
 
 
 export class WebsiteStack extends cdk.Stack {
-  constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+    constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {
+        super(scope, id, props);
 
     const websiteBucket = s3.Bucket.fromBucketName(
       this,
@@ -97,169 +98,170 @@ export class WebsiteStack extends cdk.Stack {
       }
     )
 
-    const lambdaAsset = aws_lambda.Code.fromAsset(
-      "./lambda",
-      { exclude: [ '*.zip', ".gitignore", ".eslintrc.json" ] }
-    )
 
-    const getSystemKey: custom_resources.AwsSdkCall = {
-      action: 'getParameter',
-      service: 'SSM',
-      parameters: {
-        Name:  config.systemKeyParameterName,
-        WithDecryption: true
-      },
-      physicalResourceId: custom_resources.PhysicalResourceId.of(config.systemKeyParameterName),
-    }
-    const systemKey = new custom_resources.AwsCustomResource(
-      this,
-      "ReadParameter" + new Date().getTime(),
-      {
-        onCreate: getSystemKey,
-        onUpdate: getSystemKey,
-        policy: custom_resources.AwsCustomResourcePolicy.fromSdkCalls({
-          resources: [[
-            "arn",
-            cdk.Aws.PARTITION,
-            "ssm",
-            cdk.Aws.REGION,
-            cdk.Aws.ACCOUNT_ID,
-            ["parameter", config.systemKeyParameterName].join("")
-          ].join(":")]
+        const lambdaAsset = aws_lambda.Code.fromAsset(
+            "./lambda",
+            { exclude: ['*.zip', ".gitignore", ".eslintrc.json"] }
+        )
+
+        const getSystemKey: custom_resources.AwsSdkCall = {
+            action: 'getParameter',
+            service: 'SSM',
+            parameters: {
+                Name: config.systemKeyParameterName,
+                WithDecryption: true
+            },
+            physicalResourceId: custom_resources.PhysicalResourceId.of(config.systemKeyParameterName),
+        }
+        const systemKey = new custom_resources.AwsCustomResource(
+            this,
+            "ReadParameter" + new Date().getTime(),
+            {
+                onCreate: getSystemKey,
+                onUpdate: getSystemKey,
+                policy: custom_resources.AwsCustomResourcePolicy.fromSdkCalls({
+                    resources: [[
+                        "arn",
+                        cdk.Aws.PARTITION,
+                        "ssm",
+                        cdk.Aws.REGION,
+                        cdk.Aws.ACCOUNT_ID,
+                        ["parameter", config.systemKeyParameterName].join("")
+                    ].join(":")]
+                })
+            }
+        ).getResponseField("Parameter.Value")
+
+        const lambdaEnvironment = {
+            "acceptingNewMembers": ssm.StringParameter.fromStringParameterName(
+                this,
+                "acceptingNewMembersParameter",
+                "/passwordManager/acceptingNewMembers"
+            ).stringValue,
+            systemKey,
+        }
+
+        const commonFunctionOptions = {
+            code: lambdaAsset,
+            memorySize: 128,
+            environment: lambdaEnvironment,
+            runtime: aws_lambda.Runtime.NODEJS_16_X,
+        }
+
+        const getPasswordDetailsFunction = new aws_lambda.Function(
+            this,
+            "getPasswordDetailsFunction",
+            {
+                ...commonFunctionOptions,
+                handler: "passwordManager.getPasswordDetails",
+                timeout: cdk.Duration.seconds(4),
+                description: "Password Manager - Gets Password Details",
+            }
+        )
+
+        const deletePasswordFunction = new aws_lambda.Function(
+            this,
+            "deletePasswordFunction",
+            {
+                ...commonFunctionOptions,
+                handler: 'passwordManager.deletePassword',
+                timeout: cdk.Duration.seconds(3),
+                description: 'Password Manager - Deletes a password',
+            }
+        )
+
+        const getPasswordsFunction = new aws_lambda.Function(
+            this,
+            "getPasswordsFunction",
+            {
+                ...commonFunctionOptions,
+                handler: "passwordManager.getPasswords",
+                timeout: cdk.Duration.seconds(5),
+                description: 'Password Manager - Get Passwords',
+            }
+        )
+
+        const putPasswordFunction = new aws_lambda.Function(
+            this,
+            "putPasswordFunction",
+            {
+                ...commonFunctionOptions,
+                handler: "passwordManager.putPassword",
+                timeout: cdk.Duration.seconds(4),
+                description: "Password Manager - Save Password"
+            }
+        )
+
+        const signupFunction = new aws_lambda.Function(
+            this,
+            "signupFunction",
+            {
+                ...commonFunctionOptions,
+                handler: "passwordManager.signup",
+                timeout: cdk.Duration.seconds(3),
+                description: "Password Manager - Signup"
+            }
+        )
+
+        const loginFunction = new aws_lambda.Function(
+            this,
+            "loginFunction",
+            {
+                ...commonFunctionOptions,
+                handler: 'passwordManager.login',
+                timeout: cdk.Duration.seconds(4),
+                description: "Password Manager - Login"
+            }
+        )
+
+        const acceptingNewMembersFunction = new aws_lambda.Function(
+            this,
+            "acceptingNewMembersFunction",
+            {
+                ...commonFunctionOptions,
+                handler: 'passwordManager.acceptingNewMembers',
+                timeout: cdk.Duration.seconds(1),
+                description: "Password Manager - Determines if Password Manager is accepting new members"
+            }
+        )
+
+        const usersTable = dynamodb.Table.fromTableName(
+            this,
+            "UsersTable",
+            "passwordManager-users"
+        )
+
+        const passwordsTable = dynamodb.Table.fromTableName(
+            this,
+            "PasswordsTable",
+            "passwordManager-passwords"
+        );
+
+        [
+            getPasswordDetailsFunction,
+            deletePasswordFunction,
+            getPasswordsFunction,
+            putPasswordFunction,
+            loginFunction,
+        ].forEach(lambdaFunction => {
+            usersTable.grantReadData(lambdaFunction.grantPrincipal)
         })
-      }
-    ).getResponseField("Parameter.Value")
 
-    const lambdaEnvironment = {
-      "acceptingNewMembers": ssm.StringParameter.fromStringParameterName(
-        this,
-        "acceptingNewMembersParameter",
-        "/passwordManager/acceptingNewMembers"
-      ).stringValue,
-      systemKey,
-    }
+        usersTable.grantReadWriteData(signupFunction.grantPrincipal);
 
-    const commonFunctionOptions = {
-      code: lambdaAsset,
-      memorySize: 128,
-      environment: lambdaEnvironment,
-      runtime: aws_lambda.Runtime.NODEJS_16_X,
-    }
+        [
+            getPasswordDetailsFunction,
+            getPasswordsFunction
+        ].forEach(lambdaFunction => {
+            passwordsTable.grantReadData(lambdaFunction.grantPrincipal)
+        });
 
-    const getPasswordDetailsFunction = new aws_lambda.Function(
-      this,
-      "getPasswordDetailsFunction",
-      {
-        ...commonFunctionOptions,
-        handler: "passwordManager.getPasswordDetails",
-        timeout: cdk.Duration.seconds(4),
-        description: "Password Manager - Gets Password Details",
-      }
-    )
-
-    const deletePasswordFunction = new aws_lambda.Function(
-      this,
-      "deletePasswordFunction",
-      {
-        ...commonFunctionOptions,
-        handler: 'passwordManager.deletePassword',
-        timeout: cdk.Duration.seconds(3),
-        description: 'Password Manager - Deletes a password',
-      }
-    )
-
-    const getPasswordsFunction = new aws_lambda.Function(
-      this,
-      "getPasswordsFunction",
-      {
-        ...commonFunctionOptions,
-        handler: "passwordManager.getPasswords",
-        timeout: cdk.Duration.seconds(5),
-        description: 'Password Manager - Get Passwords',
-      }
-    )
-
-    const putPasswordFunction = new aws_lambda.Function(
-      this,
-      "putPasswordFunction",
-      {
-        ...commonFunctionOptions,
-        handler: "passwordManager.putPassword",
-        timeout: cdk.Duration.seconds(4),
-        description: "Password Manager - Save Password"
-      }
-    )
-
-    const signupFunction = new aws_lambda.Function(
-      this,
-      "signupFunction",
-      {
-        ...commonFunctionOptions,
-        handler: "passwordManager.signup",
-        timeout: cdk.Duration.seconds(3),
-        description: "Password Manager - Signup"
-      }
-    )
-
-    const loginFunction = new aws_lambda.Function(
-      this,
-      "loginFunction",
-      {
-        ...commonFunctionOptions,
-        handler: 'passwordManager.login',
-        timeout: cdk.Duration.seconds(4),
-        description: "Password Manager - Login"
-      }
-    )
-
-    const acceptingNewMembersFunction = new aws_lambda.Function(
-      this,
-      "acceptingNewMembersFunction",
-      {
-        ...commonFunctionOptions,
-        handler: 'passwordManager.acceptingNewMembers',
-        timeout: cdk.Duration.seconds(1),
-        description: "Password Manager - Determines if Password Manager is accepting new members"
-      }
-    )
-
-    const usersTable = dynamodb.Table.fromTableName(
-      this,
-      "UsersTable",
-      "passwordManager-users"
-    )
-
-    const passwordsTable = dynamodb.Table.fromTableName(
-      this,
-      "PasswordsTable",
-      "passwordManager-passwords"
-    );
-
-    [
-      getPasswordDetailsFunction,
-      deletePasswordFunction,
-      getPasswordsFunction,
-      putPasswordFunction,
-      loginFunction,
-    ].forEach(lambdaFunction => {
-      usersTable.grantReadData(lambdaFunction.grantPrincipal)
-    })
-
-    usersTable.grantReadWriteData(signupFunction.grantPrincipal);
-
-    [
-      getPasswordDetailsFunction,
-      getPasswordsFunction
-    ].forEach(lambdaFunction => {
-      passwordsTable.grantReadData(lambdaFunction.grantPrincipal)
-    });
-
-    [
-      deletePasswordFunction,
-      putPasswordFunction
-    ].forEach(lambdaFunction => {
-      passwordsTable.grantWriteData(lambdaFunction.grantPrincipal)
-    });
+        [
+            deletePasswordFunction,
+            putPasswordFunction
+        ].forEach(lambdaFunction => {
+            passwordsTable.grantWriteData(lambdaFunction.grantPrincipal)
+        });
 
     const apiGateway = new apigateway.RestApi(
       this,
@@ -273,13 +275,6 @@ export class WebsiteStack extends cdk.Stack {
     const cfnApiGateway = apiGateway.node.defaultChild as apigateway.CfnRestApi
     cfnApiGateway.overrideLogicalId("ApiGateway")
 
-    function addResource(resourceName: string, method: string, handler: aws_lambda.IFunction) {
-      const resource = apiGateway.root.addResource(resourceName)
-      resource.addMethod(method, new apigateway.LambdaIntegration(handler))
-      resource.addCorsPreflight({
-        allowOrigins: ['*'],
-      })
-    }
 
     // addResource("accepting-new-members", "GET", acceptingNewMembersFunction)
     // addResource("delete-password", "POST", deletePasswordFunction)
@@ -291,4 +286,11 @@ export class WebsiteStack extends cdk.Stack {
 
     addResource("foo", "GET", acceptingNewMembersFunction)
   }
+        function addResource(resourceName: string, method: string, handler: aws_lambda.IFunction) {
+            const resource = apiGateway.root.addResource(resourceName)
+            resource.addMethod(method, new apigateway.LambdaIntegration(handler))
+            resource.addCorsPreflight({
+                allowOrigins: ['*'],
+            })
+        }
 }

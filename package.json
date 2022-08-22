@@ -1,40 +1,37 @@
 {
-  "name": "jnawk-passwordManager-react",
-  "version": "0.0.1",
-  "description": "Password Manager React Frontend",
-  "main": "passwordManager.js",
+  "name": "pm.jnawk.nz",
+  "version": "0.1.0",
+  "bin": {
+    "pm.jnawk.nz": "bin/pm.jnawk.nz.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Philip Dowie",
-  "repository": {
-    "type": "git",
-    "url": "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/passwordManager"
-  },
-  "license": "UNLICENSED",
-  "dependencies": {
-    "@babel/core": "^7.0.0-beta.40",
-    "@babel/preset-env": "^7.0.0-beta.40",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^6.4.1",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.23.0",
-    "bootstrap": "^3.0.0",
-    "css-loader": "^0.28.0",
-    "file-loader": "^0.11.1",
-    "react": "^16.1.1",
-    "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.0.0",
-    "react-google-login": "^3.0.2",
-    "react-numeric-input": "^2.2.0",
-    "style-loader": "^0.16.1",
-    "url-loader": "^0.5.8",
-    "webpack": "^2.3.3"
-  },
-  "jshintConfig": {
-    "esversion": 6
+    "build": "tsc; bash -c 'cd website; npm run build'",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "lint:cdk": "eslint . --ext .ts",
+    "lint:website": "cd website; npm run lint",
+    "lint:cdk:fix": "eslint . --ext .ts --fix",
+    "lint:website:fix": "cd website; npm run lint:fix"
   },
   "devDependencies": {
-    "babel-plugin-transform-class-properties": "^6.24.1"
+    "@types/aws-lambda": "^8.10.102",
+    "@types/jest": "^28.1.7",
+    "@types/node": "18.7.6",
+    "@types/source-map-support": "^0.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.33.1",
+    "@typescript-eslint/parser": "^5.33.1",
+    "aws-cdk": "2.37.1",
+    "aws-sdk": "^2.1199.0",
+    "eslint": "^8.22.0",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.8",
+    "ts-node": "^10.9.1",
+    "typescript": "~4.7.4"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.37.1",
+    "constructs": "^10.1.78",
+    "source-map-support": "^0.5.21"
   }
 }

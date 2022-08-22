@@ -5,37 +5,46 @@ var BUILD_DIR = path.resolve(__dirname, 's3');
 var APP_DIR = path.resolve(__dirname, 'js');
 
 var config = {
+  devtool: 'source-map',
   entry: APP_DIR + '/index.jsx',
   output: {
     path: BUILD_DIR,
     filename: 'passwordManager.js'
   },
+  mode: 'production',
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         include: APP_DIR,
-        loader: 'babel-loader'
+        use: 'babel-loader'
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "file-loader"
+        use: "file-loader"
+      },
+      {
+        test: /\.txt$/,
+        loader: "raw-loader",
+        options: {
+          esModule: false
+        }
       },
       {
         test: /\.(woff|woff2)$/,
-        loader:"url-loader?prefix=font/&limit=5000"
+        use :"url-loader?prefix=font/&limit=5000"
       },
       {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url-loader?limit=10000&mimetype=application/octet-stream"
+        use: "url-loader?limit=10000&mimetype=application/octet-stream"
       },
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url-loader?limit=10000&mimetype=image/svg+xml"
+        use: "url-loader?limit=10000&mimetype=image/svg+xml"
       }
     ]
   }

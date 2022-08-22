@@ -1,0 +1,58 @@
+{
+  "name": "jnawk-passwordManager-react",
+  "version": "0.0.1",
+  "description": "Password Manager React Frontend",
+  "main": "passwordManager.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "lint": "eslint js/*js{,x} lambda/*js",
+    "lint:fix": "eslint js/*js{,x} lambda/*js --fix"
+  },
+  "author": "Philip Dowie",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/passwordManager"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {},
+  "jshintConfig": {
+    "esversion": 6
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "auto-bind": "^4.0.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "bootstrap": "^4.5.3",
+    "css-loader": "^5.0.1",
+    "eslint": "^7.16.0",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-security": "^1.4.0",
+    "file-loader": "^6.2.0",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
+    "raw-loader": "^4.0.2",
+    "react": "^17.0.1",
+    "react-bootstrap": "^1.4.0",
+    "react-dom": "^17.0.1",
+    "react-numeric-input": "^2.2.3",
+    "react-router-bootstrap": "^0.25.0",
+    "react-router-dom": "^5.2.0",
+    "style-loader": "^2.0.0",
+    "unique-random-array": "^2.0.0",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
+  }
+}

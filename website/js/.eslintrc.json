@@ -1,9 +1,14 @@
-module.exports = {
+{
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "commonjs": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+      "eslint:recommended",
+      "plugin:security/recommended",
+      "plugin:react/recommended"
+    ],
     "parserOptions": {
         "ecmaFeatures": {
             "experimentalObjectRestSpread": true,
@@ -12,8 +17,14 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "security"
     ],
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    },
     "rules": {
         "indent": [
             "error",
@@ -29,7 +40,7 @@ module.exports = {
         ],
         "semi": [
             "error",
-            "always"
+            "never"
         ],
         "react/jsx-uses-vars": [
             "error"
@@ -41,9 +52,9 @@ module.exports = {
             "error",
             {
                 "allow": [
-                    "log",
+                    "log"
                 ]
             }
         ]
     }
-};
+}

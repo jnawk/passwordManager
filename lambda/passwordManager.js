@@ -6,47 +6,6 @@ const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'})
 const systemKey = process.env.systemKey
 const acceptingNewUsers = process.env.acceptingNewMembers
 
-
-exports.getPasswords = (event, context) => {
-    event = JSON.parse(event.body)
-    validateToken(event, (err, data) => {
-        if(err) {
-            console.log(err)
-            context.fail(err)
-        } else {
-            const newToken = data.token
-            const user = data.user
-            const userKey = decrypt(user.sysEncryptedKey.S, systemKey)
-            dynamodb.query({
-                KeyConditionExpression: 'userName = :str',
-                ExpressionAttributeValues: { ':str': { S: data.user.userName.S } },
-                TableName: passwordsTable,
-                IndexName: 'userName-index'
-            }, (err, data) => {
-                if(err) {
-                    context.fail(err)
-                } else {
-                    let passwords = Array()
-                    data.Items.forEach((password) => {
-                        passwords.push({
-                            passwordId: password.passwordId.S,
-                            description: decrypt(password.description.S, userKey)
-                        })
-                    })
-                    context.succeed({
-                        statusCode: 200,
-                        headers: corsHeaders,
-                        body: JSON.stringify({
-                            token: newToken,
-                            passwords: passwords
-                        })
-                    })
-                }
-            })
-        }
-    })
-}
-
 exports.putPassword = (event, context) => {
     event = JSON.parse(event.body)
     console.log('about to validate token')

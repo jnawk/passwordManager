@@ -22,17 +22,7 @@ export async function handler(
         }
     }
 
-    if (!systemKey) {
-        //? should this return 503 instead of throw?
-        throw new Error("System misconfigured")
-    }
-
-    if(!event.body) {
-        //? should this return 400 instead of throw?
-        throw new Error("No body!")
-    }
-
-    const body = JSON.parse(event.body)
+    const body = JSON.parse(event.body!)
 
     const dynamoResult = await (dynamodb.getItem({
         Key: { userName: { S: body.username } },
@@ -53,7 +43,7 @@ export async function handler(
     const key = buf.toString('base64')
     const encryptedKey = encrypt(key, body.password)
     const encryptedUsername = encrypt(body.username, key)
-    const sysEncryptedKey = encrypt(key, systemKey)
+    const sysEncryptedKey = encrypt(key, systemKey!)
     const user = {
         userName: { S: body.username },
         encryptedKey: { S: encryptedKey },
@@ -69,7 +59,7 @@ export async function handler(
     const token = encrypt(JSON.stringify({
         timestamp: new Date().getTime(),
         user: body.username
-    }), systemKey)
+    }), systemKey!)
 
     return {
         statusCode: 200,

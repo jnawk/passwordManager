@@ -6,7 +6,7 @@ const acceptingNewUsers = process.env.acceptingNewMembers
 
 
 export async function handler(
-    event: aws_lambda.APIGatewayEvent,
+    _event: aws_lambda.APIGatewayEvent,
     _context: aws_lambda.Context): Promise<aws_lambda.APIGatewayProxyResult> {
 
     return {

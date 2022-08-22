@@ -14,17 +14,7 @@ export async function handler(
     event: aws_lambda.APIGatewayEvent,
     _context: aws_lambda.Context): Promise<aws_lambda.APIGatewayProxyResult> {
 
-    if (!systemKey) {
-        //? should this return 503 instead of throw?
-        throw new Error("System misconfigured")
-    }
-
-    if(!event.body) {
-        //? should this return 400 instead of throw?
-        throw new Error("No body!")
-    }
-
-    const body = JSON.parse(event.body)
+    const body = JSON.parse(event.body!)
     const tokenValidation = await validateToken(body.token)
 
     const user = tokenValidation.user
@@ -32,8 +22,8 @@ export async function handler(
         throw new Error()
     }
 
-    const userKey = decrypt(user.sysEncryptedKey.S, systemKey)
-    let passwordId
+    const userKey = decrypt(user.sysEncryptedKey.S, systemKey!)
+    let passwordId = body.passwordId
     if(body.passwordId === undefined) {
         // new password
         const passwordHash = crypto.createHash('sha1').update(body.description).digest('base64')
@@ -41,9 +31,6 @@ export async function handler(
             hash: passwordHash,
             createDateTime: new Date().getTime()
         })
-    } else {
-        // existing password
-        passwordId = body.passwordId
     }
     await (dynamodb.updateItem({
         TableName: config.passwordsTable,

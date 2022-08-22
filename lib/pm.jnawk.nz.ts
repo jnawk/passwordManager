@@ -63,11 +63,6 @@ export class WebsiteStack extends cdk.Stack {
     constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
-        const lambdaAsset = aws_lambda.Code.fromAsset(
-            "./lambda",
-            { exclude: ['*.zip', ".gitignore", ".eslintrc.json"] }
-        )
-
         const getSystemKey: custom_resources.AwsSdkCall = {
             action: 'getParameter',
             service: 'SSM',
@@ -104,13 +99,6 @@ export class WebsiteStack extends cdk.Stack {
                 "/passwordManager/acceptingNewMembers"
             ).stringValue,
             systemKey,
-        }
-
-        const oldCommonFunctionOptions = {
-            code: lambdaAsset,
-            memorySize: 128,
-            environment: lambdaEnvironment,
-            runtime: aws_lambda.Runtime.NODEJS_16_X,
         }
 
         const commonFunctionOptions = {
@@ -178,12 +166,11 @@ export class WebsiteStack extends cdk.Stack {
             }
         )
 
-        const acceptingNewMembersFunction = new aws_lambda.Function(
+        const acceptingNewMembersFunction = new lambda_nodejs.NodejsFunction(
             this,
             "acceptingNewMembersFunction",
             {
                 ...commonFunctionOptions,
-                handler: 'passwordManager.acceptingNewMembers',
                 timeout: cdk.Duration.seconds(1),
                 description: "Password Manager - Determines if Password Manager is accepting new members"
             }

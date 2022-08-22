@@ -98,7 +98,7 @@ export class WebsiteStack extends cdk.Stack {
         ).getResponseField("Parameter.Value")
 
         const lambdaEnvironment = {
-            "acceptingNewMembers": ssm.StringParameter.fromStringParameterName(
+            acceptingNewMembers: ssm.StringParameter.fromStringParameterName(
                 this,
                 "acceptingNewMembersParameter",
                 "/passwordManager/acceptingNewMembers"

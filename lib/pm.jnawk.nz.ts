@@ -158,7 +158,7 @@ export class WebsiteStack extends cdk.Stack {
 
         const loginFunction = new lambda_nodejs.NodejsFunction(
             this,
-            "loginFunction",
+            "login",
             {
                 ...commonFunctionOptions,
                 timeout: cdk.Duration.seconds(4),
@@ -168,7 +168,7 @@ export class WebsiteStack extends cdk.Stack {
 
         const acceptingNewMembersFunction = new lambda_nodejs.NodejsFunction(
             this,
-            "acceptingNewMembersFunction",
+            "acceptingNewMembers",
             {
                 ...commonFunctionOptions,
                 timeout: cdk.Duration.seconds(1),

@@ -1,5 +1,4 @@
 'use strict'
-const crypto = require('crypto')
 
 const AWS = require('aws-sdk')
 const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'})
@@ -336,16 +335,3 @@ const validateToken = (event, callback) => {
     }
 }
 
-const encrypt = (data, password) => {
-    const cipher = crypto.createCipher('aes192', Buffer.from(password, 'binary'))
-    let buf = cipher.update(data, 'utf-8', 'base64')
-    buf += cipher.final('base64')
-    return buf
-}
-
-const decrypt = (data, password) => {
-    const cipher = crypto.createDecipher('aes192', Buffer.from(password, 'binary'))
-    let buf = cipher.update(data, 'base64', 'utf-8')
-    buf += cipher.final('utf-8')
-    return buf
-}

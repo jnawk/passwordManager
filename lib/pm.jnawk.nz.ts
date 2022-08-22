@@ -25,19 +25,32 @@ export class PipelineStack extends cdk.Stack {
             "Pipeline",
             {
                 publishAssetsInParallel: false,
-                synth: new pipelines.ShellStep("Synth", {
-                    input: pipelines.CodePipelineSource.connection(config.source_repository_path, config.source_repository_branch, {
-                        connectionArn: ssm.StringParameter.fromStringParameterName(this, "ConnectionArnParameter", config.connection_arn_parameter_name).stringValue
-                    }),
-                    commands: [
-                        'npm ci',
-                        '(cd website; npm ci)',
-                        'npm run build',
-                        "npx cdk synth"
-                    ]
-                }),
-                selfMutation: true
-            })
+                synth: new pipelines.ShellStep(
+                    "Synth",
+                    {
+                        input: pipelines.CodePipelineSource.connection(
+                            config.source_repository_path,
+                            config.source_repository_branch,
+                            {
+                                connectionArn: ssm.StringParameter.fromStringParameterName(
+                                    this,
+                                    "ConnectionArnParameter",
+                                    config.connection_arn_parameter_name
+                                ).stringValue
+                            }
+                        ),
+                        commands: [
+                            'npm ci',
+                            '(cd website; npm ci)',
+                            'npm run build',
+                            "npx cdk synth"
+                        ],
+                    }
+                ),
+                selfMutation: true,
+                dockerEnabledForSynth: true
+            }
+        )
 
         pipeline.addStage(new DeploymentStage(this, "Deployment"))
     }

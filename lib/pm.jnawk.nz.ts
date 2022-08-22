@@ -314,7 +314,7 @@ export class WebsiteStack extends cdk.Stack {
                 code: aws_lambda.Code.fromAsset('./lib/writeEndpoint'),
                 runtime: aws_lambda.Runtime.PYTHON_3_9,
                 handler: 'index.handler',
-                timeout: cdk.Duration.seconds(10)
+                timeout: cdk.Duration.seconds(20)
             }
         )
 

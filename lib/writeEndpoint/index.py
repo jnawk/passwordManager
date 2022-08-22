@@ -15,12 +15,14 @@ def handler(event: dict, context):
     key = properties['key']
     distribution = properties['distribution']
 
+    print(f'fetching s3://{bucket}/{key}')
     content: str = s3.get_object(
         Bucket=bucket,
         Key=key,
     )['Body'].read().decode('utf-8')
 
     content = content.replace(search, replace)
+    print(f'putting s3://{bucket}/{key}')
     s3.put_object(
         Bucket=bucket,
         Key=key,
@@ -28,6 +30,7 @@ def handler(event: dict, context):
         ACL='public-read',
         ContentType='text/html',
     )
+    print(f"invalidating {distribution}/{key}")
     cloudfront.create_invalidation(
         DistributionId=distribution,
         InvalidationBatch=dict(

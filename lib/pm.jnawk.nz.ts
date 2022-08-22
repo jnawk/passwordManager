@@ -128,12 +128,11 @@ export class WebsiteStack extends cdk.Stack {
             }
         )
 
-        const deletePasswordFunction = new aws_lambda.Function(
+        const deletePasswordFunction = new lambda_nodejs.NodejsFunction(
             this,
-            "deletePasswordFunction",
+            "deletePassword",
             {
                 ...commonFunctionOptions,
-                handler: 'passwordManager.deletePassword',
                 timeout: cdk.Duration.seconds(3),
                 description: 'Password Manager - Deletes a password',
             }

@@ -6,36 +6,6 @@ const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'})
 const systemKey = process.env.systemKey
 const acceptingNewUsers = process.env.acceptingNewMembers
 
-exports.deletePassword = (event, context) => {
-    event = JSON.parse(event.body)
-    validateToken(event, (err, data) => {
-        if(err) {
-            console.log(err)
-            context.fail(err)
-        } else {
-            const newToken = data.token
-            const user = data.user
-            // const userKey = decrypt(user.sysEncryptedKey.S, systemKey);
-            dynamodb.deleteItem({
-                Key: {
-                    'passwordId': { S: event.passwordId },
-                    'userName': { S: user.userName.S }
-                },
-                TableName: passwordsTable
-            }, (err/*, data*/) => {
-                if(err) {
-                    context.fail(err)
-                } else {
-                    context.succeed({
-                        statusCode: 200,
-                        headers: corsHeaders,
-                        body: JSON.stringify({token: newToken})
-                    })
-                }
-            })
-        }
-    })
-}
 
 exports.getPasswords = (event, context) => {
     event = JSON.parse(event.body)

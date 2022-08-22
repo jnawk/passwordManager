@@ -6,6 +6,7 @@ import {
     aws_dynamodb as dynamodb,
     aws_iam as iam,
     aws_lambda,
+    aws_lambda_nodejs as lambda_nodejs,
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
     aws_ssm as ssm,
@@ -42,6 +43,7 @@ export class PipelineStack extends cdk.Stack {
     }
 }
 
+
 export class DeploymentStage extends cdk.Stage {
     constructor(scope: constructs.Construct, id: string, props?: cdk.StageProps) {
         super(scope, id, props);
@@ -75,6 +77,7 @@ export class WebsiteStack extends cdk.Stack {
             },
             physicalResourceId: custom_resources.PhysicalResourceId.of(config.systemKeyParameterName),
         }
+
         const systemKey = new custom_resources.AwsCustomResource(
             this,
             "ReadParameter" + new Date().getTime(),
@@ -103,19 +106,23 @@ export class WebsiteStack extends cdk.Stack {
             systemKey,
         }
 
-        const commonFunctionOptions = {
+        const oldCommonFunctionOptions = {
             code: lambdaAsset,
             memorySize: 128,
             environment: lambdaEnvironment,
             runtime: aws_lambda.Runtime.NODEJS_16_X,
         }
 
-        const getPasswordDetailsFunction = new aws_lambda.Function(
+        const commonFunctionOptions = {
+            environment: lambdaEnvironment,
+            runtime: aws_lambda.Runtime.NODEJS_16_X,
+        }
+
+        const getPasswordDetailsFunction = new lambda_nodejs.NodejsFunction(
             this,
-            "getPasswordDetailsFunction",
+            "getPasswordDetails",
             {
                 ...commonFunctionOptions,
-                handler: "passwordManager.getPasswordDetails",
                 timeout: cdk.Duration.seconds(4),
                 description: "Password Manager - Gets Password Details",
             }

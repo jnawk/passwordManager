@@ -13,15 +13,8 @@ import {
     pipelines,
 } from 'aws-cdk-lib';
 
-const config = {
-    domainName: 'pm.jnawk.nz',
-    connection_arn_parameter_name: "/github_jnawk/arn",
-    distributionId: "E3UXG2M8UG0ACM",
-    websiteBucket: 'jnawk-pm',
-    source_repository_path: "jnawk/passwordManager",
-    source_repository_branch: 'cdk',
-    systemKeyParameterName: "/passwordManager/systemKey",
-}
+import * as config from './config'
+
 
 export class PipelineStack extends cdk.Stack {
     constructor(scope: constructs.Construct, id: string, props?: cdk.StackProps) {

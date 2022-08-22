@@ -7,15 +7,6 @@ const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'})
 const systemKey = process.env.systemKey
 const acceptingNewUsers = process.env.acceptingNewMembers
 
-const corsHeaders = {
-    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-    'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-    'Access-Control-Allow-Origin': '*'
-}
-
-const passwordsTable = 'passwordManager-passwords'
-const usersTable = 'passwordManager-users'
-
 exports.getPasswordDetails = (event, context) => {
     event = JSON.parse(event.body)
     validateToken(event, (err, data) => {

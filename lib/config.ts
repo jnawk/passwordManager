@@ -1,4 +1,5 @@
 export const domainName ='pm.jnawk.nz'
+export const dockerSecretArn = "arn:aws:secretsmanager:ap-southeast-2:232271975773:secret:jnawk-dockerhub-ekHHiN"
 export const connection_arn_parameter_name = "/github_jnawk/arn"
 export const distributionId = "E3UXG2M8UG0ACM"
 export const websiteBucket = 'jnawk-pm'

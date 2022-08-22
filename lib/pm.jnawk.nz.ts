@@ -9,6 +9,7 @@ import {
     aws_lambda_nodejs as lambda_nodejs,
     aws_s3 as s3,
     aws_s3_deployment as s3deploy,
+    aws_secretsmanager as secretsmanager,
     aws_ssm as ssm,
     custom_resources,
     pipelines,
@@ -24,7 +25,6 @@ export class PipelineStack extends cdk.Stack {
             this,
             "Pipeline",
             {
-                publishAssetsInParallel: false,
                 synth: new pipelines.ShellStep(
                     "Synth",
                     {
@@ -49,6 +49,15 @@ export class PipelineStack extends cdk.Stack {
                 ),
                 selfMutation: true,
                 dockerEnabledForSynth: true,
+                dockerCredentials: [
+                    pipelines.DockerCredential.dockerHub(
+                        secretsmanager.Secret.fromSecretPartialArn(
+                            this,
+                            "DockerSecret",
+                            config.dockerSecretArn
+                        )
+                    )
+                ],
             }
         )
 

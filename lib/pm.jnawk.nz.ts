@@ -148,12 +148,11 @@ export class WebsiteStack extends cdk.Stack {
             }
         )
 
-        const putPasswordFunction = new aws_lambda.Function(
+        const putPasswordFunction = new lambda_nodejs.NodejsFunction(
             this,
-            "putPasswordFunction",
+            "putPassword",
             {
                 ...commonFunctionOptions,
-                handler: "passwordManager.putPassword",
                 timeout: cdk.Duration.seconds(4),
                 description: "Password Manager - Save Password"
             }

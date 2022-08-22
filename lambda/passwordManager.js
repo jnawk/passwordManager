@@ -6,63 +6,6 @@ const dynamodb = new AWS.DynamoDB({apiVersion: '2012-08-10'})
 const systemKey = process.env.systemKey
 const acceptingNewUsers = process.env.acceptingNewMembers
 
-exports.putPassword = (event, context) => {
-    event = JSON.parse(event.body)
-    console.log('about to validate token')
-    validateToken(event, (err, data) => {
-        if(err) {
-            console.log(err)
-            context.fail(err)
-        } else {
-            const newToken = data.token
-            let passwordId
-            if('undefined' == typeof event.passwordId) {
-                // new password
-                const passwordHash = crypto.createHash('sha1').update(event.description).digest('base64')
-                passwordId = JSON.stringify({
-                    hash: passwordHash,
-                    createDateTime: new Date().getTime()
-                })
-            } else {
-                // existing password
-                passwordId = event.passwordId
-            }
-            const decryptedUserKey = decrypt(data.user.sysEncryptedKey.S, systemKey)
-            dynamodb.updateItem({
-                TableName: passwordsTable,
-                Key: {
-                    passwordId : { S: passwordId },
-                    userName: { S: data.user.userName.S }
-                },
-                UpdateExpression: 'set #D = :d, #U = :u, #P = :p',
-                ExpressionAttributeNames: {
-                    '#D': 'description',
-                    '#U': 'username',
-                    '#P': 'password'
-                },
-                ExpressionAttributeValues: {
-                    ':d': { S: encrypt(event.description, decryptedUserKey) },
-                    ':u': { S: encrypt(event.username || '', decryptedUserKey) },
-                    ':p': { S: encrypt(event.password, decryptedUserKey) }
-                }
-            }, (err/*, data*/) => {
-                if(err) {
-                    context.fail(err)
-                } else {
-                    context.succeed({
-                        statusCode: 200,
-                        headers: corsHeaders,
-                        body: JSON.stringify({
-                            token: newToken,
-                            passwordId: passwordId
-                        })
-                    })
-                }
-            })
-        }
-    })
-}
-
 exports.signup = (event, context) => {
     event = JSON.parse(event.body)
     const username = event.username

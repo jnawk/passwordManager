@@ -48,7 +48,7 @@ export class PipelineStack extends cdk.Stack {
                     }
                 ),
                 selfMutation: true,
-                dockerEnabledForSynth: true
+                dockerEnabledForSynth: true,
             }
         )
 
@@ -305,6 +305,7 @@ export class WebsiteStack extends cdk.Stack {
                 code: aws_lambda.Code.fromAsset('./lib/writeEndpoint'),
                 runtime: aws_lambda.Runtime.PYTHON_3_9,
                 handler: 'index.handler',
+                timeout: cdk.Duration.seconds(10)
             }
         )
 

@@ -301,37 +301,3 @@ exports.login = (event, context) => {
     })
 }
 
-const validateToken = (event, callback) => {
-    const decryptedToken = JSON.parse(decrypt(event.token, systemKey))
-    const oldestAcceptableToken = new Date().getTime() - (1000 * 60 * 15)
-    if(decryptedToken.timestamp < oldestAcceptableToken) {
-        callback(new Error('session expired'))
-    } else {
-        try {
-            console.log(decryptedToken)
-            const username = decryptedToken.user
-            dynamodb.getItem({
-                Key: { userName: { S: username } },
-                TableName: usersTable
-            }, function(err, data) {
-                if(err) {
-                    callback(err)
-                } else {
-                    const newToken = encrypt(JSON.stringify({
-                        timestamp: new Date().getTime(),
-                        user: username
-                    }), systemKey)
-                    callback(null, {
-                        token: newToken,
-                        user: data.Item,
-                        systemKey: systemKey
-                    })
-                }
-            })
-        } catch (ex) {
-            console.log(ex)
-            callback(new Error('token failure'))
-        }
-    }
-}
-
